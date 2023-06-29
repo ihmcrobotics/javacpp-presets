@@ -19,6 +19,7 @@
     <module>../ffmpeg/platform</module>
     <module>../flycapture/platform</module>
     <module>../spinnaker/platform</module>
+    <module>../zed/platform</module>
     <module>../libdc1394/platform</module>
     <module>../libfreenect/platform</module>
     <module>../libfreenect2/platform</module>
@@ -102,6 +103,11 @@
       <groupId>org.bytedeco</groupId>
       <artifactId>spinnaker-platform</artifactId>
       <version>3.0.0.118-${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bytedeco</groupId>
+      <artifactId>zed-platform</artifactId>
+      <version>3.8-${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bytedeco</groupId>

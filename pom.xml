@@ -581,6 +581,7 @@
         <module>ffmpeg</module>
         <module>flycapture</module>
         <module>spinnaker</module>
+        <module>zed</module>
         <module>libdc1394</module>
         <module>libfreenect</module>
         <module>libfreenect2</module>
@@ -1365,6 +1366,7 @@
         <module>ffmpeg</module>
         <module>flycapture</module>
         <module>spinnaker</module>
+        <module>zed</module>
         <module>libdc1394</module>
         <module>libfreenect</module>
         <module>libfreenect2</module>
@@ -1579,6 +1581,7 @@
         <module>ffmpeg</module>
         <module>flycapture</module>
         <module>spinnaker</module>
+        <module>zed</module>
         <module>libdc1394</module>
         <module>libfreenect</module>
         <module>librealsense</module>
@@ -1644,6 +1647,7 @@
         <module>ffmpeg</module>
         <module>flycapture</module>
         <module>spinnaker</module>
+        <module>zed</module>
         <module>libdc1394</module>
         <module>libfreenect</module>
         <module>libfreenect2</module>
