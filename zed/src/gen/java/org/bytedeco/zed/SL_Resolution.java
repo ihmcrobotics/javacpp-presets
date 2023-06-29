@@ -9,7 +9,6 @@ import org.bytedeco.javacpp.annotation.*;
 import static org.bytedeco.zed.global.zed.*;
 
 
-
 /**
 * \brief Resolution
 */

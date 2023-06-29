@@ -51,16 +51,10 @@ public class SL_ObjectsBatch extends Pointer {
 	@MemberGetter public native FloatPointer confidences();
 	public native @Cast("SL_OBJECT_ACTION_STATE") int action_states(int i); public native SL_ObjectsBatch action_states(int i, int setter);
 	@MemberGetter public native @Cast("SL_OBJECT_ACTION_STATE*") IntPointer action_states();
-	public native @ByRef SL_Vector2 keypoints_2d(int i, int j); public native SL_ObjectsBatch keypoints_2d(int i, int j, SL_Vector2 setter);
-	@MemberGetter public native @Cast("SL_Vector2(*)[18]") SL_Vector2 keypoints_2d();
-	public native @ByRef SL_Vector3 keypoints(int i, int j); public native SL_ObjectsBatch keypoints(int i, int j, SL_Vector3 setter);
-	@MemberGetter public native @Cast("SL_Vector3(*)[18]") SL_Vector3 keypoints();
 	public native @ByRef SL_Vector2 head_bounding_boxes_2d(int i, int j); public native SL_ObjectsBatch head_bounding_boxes_2d(int i, int j, SL_Vector2 setter);
 	@MemberGetter public native @Cast("SL_Vector2(*)[4]") SL_Vector2 head_bounding_boxes_2d();
 	public native @ByRef SL_Vector3 head_bounding_boxes(int i, int j); public native SL_ObjectsBatch head_bounding_boxes(int i, int j, SL_Vector3 setter);
 	@MemberGetter public native @Cast("SL_Vector3(*)[8]") SL_Vector3 head_bounding_boxes();
 	public native @ByRef SL_Vector3 head_positions(int i); public native SL_ObjectsBatch head_positions(int i, SL_Vector3 setter);
 	@MemberGetter public native SL_Vector3 head_positions();
-	public native float keypoints_confidences(int i, int j); public native SL_ObjectsBatch keypoints_confidences(int i, int j, float setter);
-	@MemberGetter public native @Cast("float(*)[18]") FloatPointer keypoints_confidences();
 }

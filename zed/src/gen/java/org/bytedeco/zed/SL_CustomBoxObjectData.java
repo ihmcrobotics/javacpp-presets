@@ -62,6 +62,6 @@ public class SL_CustomBoxObjectData extends Pointer {
 	\brief Provide hypothesis about the object movements(degrees of freedom) to improve the object tracking
 		* true: means 2 DoF projected alongside the floor plane, the default for object standing on the ground such as person, vehicle, etc
 		* false : 6 DoF full 3D movements are allowed
-    */
+	*/
 	public native @Cast("bool") boolean is_grounded(); public native SL_CustomBoxObjectData is_grounded(boolean setter);
 }

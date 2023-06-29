@@ -66,4 +66,10 @@ public class SL_SpatialMappingParameters extends Pointer {
 	\brief The type of spatial map to be created. This dictates the format that will be used for the mapping(e.g. mesh, point cloud). See \ref SPATIAL_MAP_TYPE
 	 */
 	public native @Cast("SL_SPATIAL_MAP_TYPE") int map_type(); public native SL_SpatialMappingParameters map_type(int setter);
+	/**
+		\brief Control the integration rate of the current depth into the mapping process.
+		This parameter controls how many times a stable 3D points should be seen before it is integrated into the spatial mapping.
+		Default value is 0, this will define the stability counter based on the mesh resolution, the higher the resolution, the higher the stability counter.
+	*/
+	public native int stability_counter(); public native SL_SpatialMappingParameters stability_counter(int setter);
 }

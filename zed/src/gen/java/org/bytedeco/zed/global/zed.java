@@ -20,6 +20,7 @@ public class zed extends org.bytedeco.zed.presets.zed {
  * \file
  * */
 
+public static final int MAX_FUSED_CAMERAS = 20;
 public static final int WITH_OBJECT_DETECTION = 1;
 // #ifdef WITH_UNLIMITED_CAMERA
 public static final int MAX_CAMERA_PLUGIN = 20;
@@ -29,6 +30,8 @@ public static final int MAX_CAMERA_PLUGIN = 20;
 public static final int MAX_SUBMESH = 1000;
 
 // #include <stdbool.h>
+
+// #include "cuda.h"
 // Targeting ../SL_Quaternion.java
 
 
@@ -62,10 +65,10 @@ public static final int MAX_SUBMESH = 1000;
 
 /** enum UNITY_PLAN_TYPE */
 public static final int
-    UNITY_PLAN_TYPE_FLOOR = 0,
-    UNITY_PLAN_TYPE_HIT_HORIZONTAL = 1,
-    UNITY_PLAN_TYPE_HIT_VERTICAL = 2,
-    UNITY_PLAN_TYPE_HIT_UNKNOWN = 3;
+	UNITY_PLAN_TYPE_FLOOR = 0,
+	UNITY_PLAN_TYPE_HIT_HORIZONTAL = 1,
+	UNITY_PLAN_TYPE_HIT_VERTICAL = 2,
+	UNITY_PLAN_TYPE_HIT_UNKNOWN = 3;
 // Targeting ../SL_PlaneData.java
 
 
@@ -98,7 +101,7 @@ public static final int
 // Targeting ../SL_TemperatureData.java
 
 
-// Targeting ../SL_SensorData.java
+// Targeting ../SL_SensorsData.java
 
 
 
@@ -116,6 +119,7 @@ public static final int
  */
 /** enum SL_ERROR_CODE */
 public static final int
+	SL_ERROR_CODE_CAMERA_REBOOTING = -1,
 	/** Standard code for successful behavior.*/
 	SL_ERROR_CODE_SUCCESS = 0,
 	/** Standard code for unsuccessful behavior.*/
@@ -195,10 +199,16 @@ public static final int
 	SL_RESOLUTION_HD2K = 0,
 	/** 1920*1080, available framerates: 15, 30 fps.*/
 	SL_RESOLUTION_HD1080 = 1,
+	/** 1920*1200 (x2), available framerates: 30,60 fps. (ZED-X(M) only)*/
+	SL_RESOLUTION_HD1200 = 2,
 	/** 1280*720, available framerates: 15, 30, 60 fps.*/
-	SL_RESOLUTION_HD720 = 2,
+	SL_RESOLUTION_HD720 = 3,
+	/** 960*600 (x2), available framerates: 60, 120 fps. (ZED-X(M) only) */
+	SL_RESOLUTION_SVGA = 4,
 	/** 672*376, available framerates: 15, 30, 60, 100 fps.*/
-	SL_RESOLUTION_VGA = 3;
+	SL_RESOLUTION_VGA = 5,
+	/** Select the resolution compatible with camera, on ZEDX HD1200, HD720 otherwise */
+	SL_RESOLUTION_AUTO = 6;
 
 /**
 \brief Lists available unit for measures.
@@ -223,7 +233,7 @@ public static final int
  */
 /** enum SL_COORDINATE_SYSTEM */
 public static final int
-	/** Standard coordinates system in computer vision. Used in OpenCV : see here : http://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html */
+	/** Standard coordinates system in computer vision. Used in OpenCV : see <a href="http://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html">here</a>. */
 	SL_COORDINATE_SYSTEM_IMAGE = 0,
 	/** Left-Handed with Y up and Z forward. Used in Unity with DirectX. */
 	SL_COORDINATE_SYSTEM_LEFT_HANDED_Y_UP = 1,
@@ -258,7 +268,9 @@ public static final int
 	/** Defines ZED 2 Camera model */
 	SL_MODEL_ZED2 = 2,
 	/** Defines ZED 2i Camera model */
-	SL_MODEL_ZED2i = 3;
+	SL_MODEL_ZED2i = 3,
+	SL_MODEL_ZED_X = 4,
+	SL_MODEL_ZED_XM = 5;
 
 /**
 \brief List available memory type
@@ -315,7 +327,8 @@ public static final int
 public static final int
 	SL_INPUT_TYPE_USB = 0,
 	SL_INPUT_TYPE_SVO = 1,
-	SL_INPUT_TYPE_STREAM = 2;
+	SL_INPUT_TYPE_STREAM = 2,
+	SL_INPUT_TYPE_GMSL = 3;
 
 /**
 \brief Defines which type of position matrix is used to store camera path and pose.
@@ -377,7 +390,23 @@ public static final int
 	SL_VIDEO_SETTINGS_WHITEBALANCE_AUTO = 11,
 	/** Defines the status of the camera front LED. Set to 0 to disable the light, 1 to enable the light. Default value is on. Requires Camera FW 1523 at least.*/
 	SL_VIDEO_SETTINGS_LED_STATUS = 12,
-	SL_VIDEO_SETTINGS_LAST = 13;
+	/** Defines the real exposure time in microseconds. Only available for GMSL based cameras. Recommended for ZED-X/ZED-XM to control manual exposure (instead of EXPOSURE setting)*/
+	SL_VIDEO_SETTINGS_EXPOSURE_TIME = 13,
+	/** Defines the real analog gain (sensor) in mDB. Range is defined by Jetson DTS and by default [1000-16000].  Recommended for ZED-X/ZED-XM to control manual sensor gain (instead of GAIN setting). Only available for GMSL based cameras.*/
+	SL_VIDEO_SETTINGS_ANALOG_GAIN = 14,
+	/** Defines the real digital gain (ISP) as a factor. Range is defined by Jetson DTS and by default [1-256].  Recommended for ZED-X/ZED-XM to control manual ISP gain (instead of GAIN setting). Only available for GMSL based cameras.*/
+	SL_VIDEO_SETTINGS_DIGITAL_GAIN = 15,
+	/** Defines the range of exposure auto control in micro seconds.Used with \ref setCameraSettings(VIDEO_SETTINGS,int,int).  Min/Max range between Max range defined in DTS. By default : [28000 - <fps_time> or 19000] us. Only available for GMSL based cameras.*/
+	SL_VIDEO_SETTINGS_AUTO_EXPOSURE_TIME_RANGE = 16,
+	/** Defines the range of sensor gain in automatic control. Used in setCameraSettings(VIDEO_SETTINGS,int,int). Min/Max range between [1000 - 16000]mdB  */
+	SL_VIDEO_SETTINGS_AUTO_ANALOG_GAIN_RANGE = 17,
+	/** Defines the range of digital ISP gain in automatic control. Used in setCameraSettings(VIDEO_SETTINGS,int,int) */
+	SL_VIDEO_SETTINGS_AUTO_DIGITAL_GAIN_RANGE = 18,
+	/** Exposure target compensation made after AE. Reduces the overall illumination by factor of F-stops. values range is [0 - 100] (mapped between [-2.0,2.0]).  Only available for GMSL based cameras*/
+	SL_VIDEO_SETTINGS_EXPOSURE_COMPENSATION = 19,
+	/** Defines the level of denoising applied on both left and right images. values range is [0-100].Default value is 50. Only available for GMSL based cameras*/
+	SL_VIDEO_SETTINGS_DENOISING = 20,
+	SL_VIDEO_SETTINGS_LAST = 21;
 
 @MemberGetter public static native int SL_VIDEO_SETTINGS_VALUE_AUTO();
 
@@ -454,6 +483,22 @@ public static final int
 	SL_POSITIONAL_TRACKING_STATE_SEARCHING_FLOOR_PLANE = 4;
 
 /**
+ \enum POSITIONAL_TRACKING_MODE
+ \ingroup PositionalTracking_group
+ \brief Lists the mode of positional tracking that can be used.
+  */
+/** enum SL_POSITIONAL_TRACKING_MODE */
+public static final int
+	/** Default mode, best compromise in performance and accuracy */
+	SL_POSITIONAL_TRACKING_MODE_STANDARD = 0,
+	/** Improve accuracy in more challening scenes such as outdoor repetitive patterns like extensive field. Curently works best with ULTRA depth mode, requires more compute power */
+	SL_POSITIONAL_TRACKING_MODE_QUALITY = 1,
+	/**\cond SHOWHIDDEN */
+	SL_POSITIONAL_TRACKING_MODE_LAST = 2;
+	/**\endcond */
+
+
+/**
 \brief Lists the different states of spatial memory area export.
  */
 /** enum SL_AREA_EXPORTING_STATE */
@@ -517,25 +562,15 @@ public static final int
 	SL_MESH_FILE_FORMAT_OBJ = 2;
 
 /**
-\brief Lists available depth sensing modes.
- */
-/** enum SL_SENSING_MODE */
-public static final int
-	/** This mode outputs ZED standard depth map that preserves edges and depth accuracy.
-	* Applications example: Obstacle detection, Automated navigation, People detection, 3D reconstruction, measurements.*/
-	SL_SENSING_MODE_STANDARD = 0,
-	/** This mode outputs a smooth and fully dense depth map.
-	* Applications example: AR/VR, Mixed-reality capture, Image post-processing.*/
-	SL_SENSING_MODE_FILL = 1;
-
-/**
 \brief Lists available depth computation modes.
  */
 /** enum SL_DEPTH_MODE */
 public static final int
 	SL_DEPTH_MODE_NONE = 0, /** This mode does not compute any depth map. Only rectified stereo images will be available.*/
 	SL_DEPTH_MODE_PERFORMANCE = 1, /** Computation mode optimized for speed.*/
-	SL_DEPTH_MODE_QUALITY = 2, /** Computation mode designed for challenging areas with untextured surfaces.*/
+	/** Computation mode designed for challenging areas with untextured surfaces.*/
+	SL_DEPTH_MODE_QUALITY = 2,
+	//SL_DEPTH_MODE_NEURAL_FAST, /**< End to End Neural disparity estimation, requires AI module */
 	SL_DEPTH_MODE_ULTRA = 3, /** Computation mode favorising edges and sharpness. Requires more GPU memory and computation power.*/
 	/** End to End Neural disparity estimation, requires AI module */
 	SL_DEPTH_MODE_NEURAL = 4;
@@ -673,26 +708,29 @@ public static final int
 /**
 \brief List available models for detection
  */
-/** enum SL_DETECTION_MODEL */
+/** enum SL_OBJECT_DETECTION_MODEL */
 public static final int
 	/** Any objects, bounding box based */
-	SL_DETECTION_MODEL_MULTI_CLASS_BOX = 0,
-	/** Any objects, bounding box based, more accurate but slower than the base model */
-	SL_DETECTION_MODEL_MULTI_CLASS_BOX_ACCURATE = 1,
-	/**  Keypoints based, specific to human skeleton, real time performance even on Jetson or low end GPU cards */
-	SL_DETECTION_MODEL_HUMAN_BODY_FAST = 2,
-	/**  Keypoints based, specific to human skeleton, state of the art accuracy, requires powerful GPU */
-	SL_DETECTION_MODEL_HUMAN_BODY_ACCURATE = 3,
+	SL_OBJECT_DETECTION_MODEL_MULTI_CLASS_BOX_FAST = 0,
 	/** Any objects, bounding box based, compromise between accuracy and speed */
-	SL_DETECTION_MODEL_MULTI_CLASS_BOX_MEDIUM = 4,
-	/**  Keypoints based, specific to human skeleton, compromise between accuracy and speed */
-	SL_DETECTION_MODEL_HUMAN_BODY_MEDIUM = 5,
+	SL_OBJECT_DETECTION_MODEL_MULTI_CLASS_BOX_MEDIUM = 1,
+	/** Any objects, bounding box based, more accurate but slower than the base model */
+	SL_OBJECT_DETECTION_MODEL_MULTI_CLASS_BOX_ACCURATE = 2,
 	/**  Bounding Box detector specialized in person heads, particulary well suited for crowded environement, the person localization is also improved */
-	SL_DETECTION_MODEL_PERSON_HEAD_BOX = 6,
+	SL_OBJECT_DETECTION_MODEL_PERSON_HEAD_BOX_FAST = 3,
 	/**  Bounding Box detector specialized in person heads, particulary well suited for crowded environments, the person localization is also improved, state of the art accuracy */
-	SL_DETECTION_MODEL_PERSON_HEAD_BOX_ACCURATE = 7,
+	SL_OBJECT_DETECTION_MODEL_PERSON_HEAD_BOX_ACCURATE = 4,
 	/** For external inference, using your own custom model and/or frameworks. This mode disable the internal inference engine, the 2D bounding box detection must be provided */
-	SL_DETECTION_MODEL_CUSTOM_BOX_OBJECTS = 8;
+	SL_OBJECT_DETECTION_MODEL_CUSTOM_BOX_OBJECTS = 5;
+
+/** enum SL_BODY_TRACKING_MODEL */
+public static final int
+	/**  Keypoints based, specific to human skeleton, real time performance even on Jetson or low end GPU cards */
+	SL_BODY_TRACKING_MODEL_HUMAN_BODY_FAST = 0,
+	/**  Keypoints based, specific to human skeleton, compromise between accuracy and speed */
+	SL_BODY_TRACKING_MODEL_HUMAN_BODY_MEDIUM = 1,
+	/**  Keypoints based, specific to human skeleton, state of the art accuracy, requires powerful GPU */
+	SL_BODY_TRACKING_MODEL_HUMAN_BODY_ACCURATE = 2;
 
 /**
    \brief Lists available  AI moles.
@@ -705,11 +743,17 @@ public static final int
 	SL_AI_MODELS_HUMAN_BODY_FAST_DETECTION = 3, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST
 	SL_AI_MODELS_HUMAN_BODY_MEDIUM_DETECTION = 4, // related to sl::DETECTION_MODEL::HUMAN_BODY_MEDIUM
 	SL_AI_MODELS_HUMAN_BODY_ACCURATE_DETECTION = 5, // related to sl::DETECTION_MODEL::HUMAN_BODY_ACCURATE
-	SL_AI_MODELS_PERSON_HEAD_DETECTION = 6, // related to sl::DETECTION_MODEL::PERSON_HEAD_BOX
-	SL_AI_MODELS_PERSON_HEAD_ACCURATE_DETECTION = 7, // related to sl::DETECTION_MODEL::PERSON_HEAD_BOX_ACCURATE
-	SL_AI_MODELS_REID_ASSOCIATION = 8, // related to sl::BatchParameters::enable
-	SL_AI_MODELS_NEURAL_DEPTH = 9, // related to sl::DEPTH_MODE::NEURAL
-	SL_AI_MODELS_LAST = 10;
+	SL_AI_MODELS_HUMAN_BODY_38_FAST_DETECTION = 6, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST
+	SL_AI_MODELS_HUMAN_BODY_38_MEDIUM_DETECTION = 7, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST
+	SL_AI_MODELS_HUMAN_BODY_38_ACCURATE_DETECTION = 8, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST
+	SL_AI_MODELS_HUMAN_BODY_70_FAST_DETECTION = 9, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST
+	SL_AI_MODELS_HUMAN_BODY_70_MEDIUM_DETECTION = 10, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST
+	SL_AI_MODELS_HUMAN_BODY_70_ACCURATE_DETECTION = 11, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST
+	SL_AI_MODELS_PERSON_HEAD_DETECTION = 12, // related to sl::DETECTION_MODEL::PERSON_HEAD_BOX
+	SL_AI_MODELS_PERSON_HEAD_ACCURATE_DETECTION = 13, // related to sl::DETECTION_MODEL::PERSON_HEAD_BOX_ACCURATE
+	SL_AI_MODELS_REID_ASSOCIATION = 14, // related to sl::BatchParameters::enable
+	SL_AI_MODELS_NEURAL_DEPTH = 15, // related to sl::DEPTH_MODE::NEURAL
+	SL_AI_MODELS_LAST = 16;
 
 /**
 \brief Lists of supported bounding box preprocessing
@@ -720,14 +764,14 @@ public static final int
 	 * \brief SDK will not apply any preprocessing to the detected objects
 	 */
 	SL_OBJECT_FILTERING_MODE_NONE = 0,
-    /**
-     * \brief SDK will remove objects that are in the same 3D position as an already tracked object (independant of class ID)
-     */
-    SL_OBJECT_FILTERING_MODE_NMS_3D = 1,
-    /**
-     * \brief SDK will remove objects that are in the same 3D position as an already tracked object of the same class ID
-     */
-    SL_OBJECT_FILTERING_MODE_NMS_3D_PER_CLASS = 2;
+	/**
+	 * \brief SDK will remove objects that are in the same 3D position as an already tracked object (independant of class ID)
+	 */
+	 SL_OBJECT_FILTERING_MODE_NMS_3D = 1,
+	 /**
+	  * \brief SDK will remove objects that are in the same 3D position as an already tracked object of the same class ID
+	  */
+	  SL_OBJECT_FILTERING_MODE_NMS_3D_PER_CLASS = 2;
 
 
 /**
@@ -736,83 +780,247 @@ public static final int
 /** enum SL_BODY_FORMAT */
 public static final int
 	/**
-	 * \brief 18  keypoint model of COCO 18.
-	 * \note local keypoint angle and position are not available with this format
+	 * \brief Legacy 38 keypoint model.
+	 * Body model, including feet simplified face and hands
 	 */
-	SL_BODY_FORMAT_POSE_18 = 0,
+	SL_BODY_FORMAT_BODY_18 = 0,
+	/**
+	* \brief Legacy 34 keypoints model.
+	* Body model, requires body fitting enabled
+	 */
+	SL_BODY_FORMAT_BODY_34 = 1,
+	/**
+	 * \brief 38 keypoint model.
+	 * Body model, including feet simplified face and hands
+	 */
+	SL_BODY_FORMAT_BODY_38 = 2,
 
 	/**
-	 * \brief 34 keypoint model.
-	 * \note local keypoint angle and position are available
-	 * \warning The SDK will automatically enable fitting.
+	 * \brief 70 keypoint model.
+	 * Body model, including feet and full hands models (and simplified face)
 	 */
-	SL_BODY_FORMAT_POSE_34 = 1;
+	SL_BODY_FORMAT_BODY_70 = 3;
+
+/** enum SL_BODY_KEYPOINTS_SELECTION */
+public static final int
+	/**
+	 * \brief Full keypoint model.
+	 */
+	SL_BODY_KEYPOINTS_SELECTION_FULL = 0,
+	/**
+	 * \brief Upper body keypoint model.
+	 * Only the upper body will be outputted (from hip)
+	 */
+	SL_BODY_KEYPOINTS_SELECTION_UPPER_BODY = 1;
+	/**
+	 * \brief Hands only
+	 */
+	//SL_BODY_KEYPOINTS_SELECTION_HAND
+
 
 /**
- * \brief semantic of human body parts and order of \ref ObjectData::keypoint.
+ * \brief semantic of human body parts and order of \ref ObjectData::keypoint for BODY_FORMAT::BODY_18.
  */
-/** enum SL_BODY_PARTS_POSE_18 */
+/** enum SL_BODY_18_PARTS */
 public static final int
-	SL_BODY_PARTS_POSE_18_NOSE = 0,
-	SL_BODY_PARTS_POSE_18_NECK = 1,
-	SL_BODY_PARTS_POSE_18_RIGHT_SHOULDER = 2,
-	SL_BODY_PARTS_POSE_18_RIGHT_ELBOW = 3,
-	SL_BODY_PARTS_POSE_18_RIGHT_WRIST = 4,
-	SL_BODY_PARTS_POSE_18_LEFT_SHOULDER = 5,
-	SL_BODY_PARTS_POSE_18_LEFT_ELBOW = 6,
-	SL_BODY_PARTS_POSE_18_LEFT_WRIST = 7,
-	SL_BODY_PARTS_POSE_18_RIGHT_HIP = 8,
-	SL_BODY_PARTS_POSE_18_RIGHT_KNEE = 9,
-	SL_BODY_PARTS_POSE_18_RIGHT_ANKLE = 10,
-	SL_BODY_PARTS_POSE_18_LEFT_HIP = 11,
-	SL_BODY_PARTS_POSE_18_LEFT_KNEE = 12,
-	SL_BODY_PARTS_POSE_18_LEFT_ANKLE = 13,
-	SL_BODY_PARTS_POSE_18_RIGHT_EYE = 14,
-	SL_BODY_PARTS_POSE_18_LEFT_EYE = 15,
-	SL_BODY_PARTS_POSE_18_RIGHT_EAR = 16,
-	SL_BODY_PARTS_POSE_18_LEFT_EAR = 17,
-	SL_BODY_PARTS_POSE_18_LAST = 18;
+	SL_BODY_18_PARTS_NOSE = 0,
+	SL_BODY_18_PARTS_NECK = 1,
+	SL_BODY_18_PARTS_RIGHT_SHOULDER = 2,
+	SL_BODY_18_PARTS_RIGHT_ELBOW = 3,
+	SL_BODY_18_PARTS_RIGHT_WRIST = 4,
+	SL_BODY_18_PARTS_LEFT_SHOULDER = 5,
+	SL_BODY_18_PARTS_LEFT_ELBOW = 6,
+	SL_BODY_18_PARTS_LEFT_WRIST = 7,
+	SL_BODY_18_PARTS_RIGHT_HIP = 8,
+	SL_BODY_18_PARTS_RIGHT_KNEE = 9,
+	SL_BODY_18_PARTS_RIGHT_ANKLE = 10,
+	SL_BODY_18_PARTS_LEFT_HIP = 11,
+	SL_BODY_18_PARTS_LEFT_KNEE = 12,
+	SL_BODY_18_PARTS_LEFT_ANKLE = 13,
+	SL_BODY_18_PARTS_RIGHT_EYE = 14,
+	SL_BODY_18_PARTS_LEFT_EYE = 15,
+	SL_BODY_18_PARTS_RIGHT_EAR = 16,
+	SL_BODY_18_PARTS_LEFT_EAR = 17,
+	SL_BODY_18_PARTS_LAST = 18;
 
 /**
- * \brief semantic of human body parts and order of \ref ObjectData::keypoint for BODY_FORMAT::POSE_34.
+ * \brief semantic of human body parts and order of \ref ObjectData::keypoint for BODY_FORMAT::BODY_34.
  */
-/** enum SL_BODY_PARTS_POSE_34 */
+/** enum SL_BODY_34_PARTS */
 public static final int
-	SL_BODY_PARTS_POSE_34_PELVIS = 0,
-	SL_BODY_PARTS_POSE_34_NAVAL_SPINE = 1,
-	SL_BODY_PARTS_POSE_34_CHEST_SPINE = 2,
-	SL_BODY_PARTS_POSE_34_NECK = 3,
-	SL_BODY_PARTS_POSE_34_LEFT_CLAVICLE = 4,
-	SL_BODY_PARTS_POSE_34_LEFT_SHOULDER = 5,
-	SL_BODY_PARTS_POSE_34_LEFT_ELBOW = 6,
-	SL_BODY_PARTS_POSE_34_LEFT_WRIST = 7,
-	SL_BODY_PARTS_POSE_34_LEFT_HAND = 8,
-	SL_BODY_PARTS_POSE_34_LEFT_HANDTIP = 9,
-	SL_BODY_PARTS_POSE_34_LEFT_THUMB = 10,
-	SL_BODY_PARTS_POSE_34_RIGHT_CLAVICLE = 11,
-	SL_BODY_PARTS_POSE_34_RIGHT_SHOULDER = 12,
-	SL_BODY_PARTS_POSE_34_RIGHT_ELBO = 13,
-	SL_BODY_PARTS_POSE_34_RIGHT_WRIST = 14,
-	SL_BODY_PARTS_POSE_34_RIGHT_HAND = 15,
-	SL_BODY_PARTS_POSE_34_RIGHT_HANDTIP = 16,
-	SL_BODY_PARTS_POSE_34_RIGHT_THUMB = 17,
-	SL_BODY_PARTS_POSE_34_LEFT_HIP = 18,
-	SL_BODY_PARTS_POSE_34_LEFT_KNEE = 19,
-	SL_BODY_PARTS_POSE_34_LEFT_ANKLE = 20,
-	SL_BODY_PARTS_POSE_34_LEFT_FOOT = 21,
-	SL_BODY_PARTS_POSE_34_RIGHT_HIP = 22,
-	SL_BODY_PARTS_POSE_34_RIGHT_KNEE = 23,
-	SL_BODY_PARTS_POSE_34_RIGHT_ANKLE = 24,
-	SL_BODY_PARTS_POSE_34_RIGHT_FOOT = 25,
-	SL_BODY_PARTS_POSE_34_HEAD = 26,
-	SL_BODY_PARTS_POSE_34_NOSE = 27,
-	SL_BODY_PARTS_POSE_34_LEFT_EYE = 28,
-	SL_BODY_PARTS_POSE_34_LEFT_EAR = 29,
-	SL_BODY_PARTS_POSE_34_RIGHT_EYE = 30,
-	SL_BODY_PARTS_POSE_34_RIGHT_EAR = 31,
-	SL_BODY_PARTS_POSE_34_LEFT_HEEL = 32,
-	SL_BODY_PARTS_POSE_34_RIGHT_HEEL = 33,
-	SL_BODY_PARTS_POSE_34_LAST = 34;
+	SL_BODY_34_PARTS_PELVIS = 0,
+	SL_BODY_34_PARTS_NAVAL_SPINE = 1,
+	SL_BODY_34_PARTS_CHEST_SPINE = 2,
+	SL_BODY_34_PARTS_NECK = 3,
+	SL_BODY_34_PARTS_LEFT_CLAVICLE = 4,
+	SL_BODY_34_PARTS_LEFT_SHOULDER = 5,
+	SL_BODY_34_PARTS_LEFT_ELBOW = 6,
+	SL_BODY_34_PARTS_LEFT_WRIST = 7,
+	SL_BODY_34_PARTS_LEFT_HAND = 8,
+	SL_BODY_34_PARTS_LEFT_HANDTIP = 9,
+	SL_BODY_34_PARTS_LEFT_THUMB = 10,
+	SL_BODY_34_PARTS_RIGHT_CLAVICLE = 11,
+	SL_BODY_34_PARTS_RIGHT_SHOULDER = 12,
+	SL_BODY_34_PARTS_RIGHT_ELBOW = 13,
+	SL_BODY_34_PARTS_RIGHT_WRIST = 14,
+	SL_BODY_34_PARTS_RIGHT_HAND = 15,
+	SL_BODY_34_PARTS_RIGHT_HANDTIP = 16,
+	SL_BODY_34_PARTS_RIGHT_THUMB = 17,
+	SL_BODY_34_PARTS_LEFT_HIP = 18,
+	SL_BODY_34_PARTS_LEFT_KNEE = 19,
+	SL_BODY_34_PARTS_LEFT_ANKLE = 20,
+	SL_BODY_34_PARTS_LEFT_FOOT = 21,
+	SL_BODY_34_PARTS_RIGHT_HIP = 22,
+	SL_BODY_34_PARTS_RIGHT_KNEE = 23,
+	SL_BODY_34_PARTS_RIGHT_ANKLE = 24,
+	SL_BODY_34_PARTS_RIGHT_FOOT = 25,
+	SL_BODY_34_PARTS_HEAD = 26,
+	SL_BODY_34_PARTS_NOSE = 27,
+	SL_BODY_34_PARTS_LEFT_EYE = 28,
+	SL_BODY_34_PARTS_LEFT_EAR = 29,
+	SL_BODY_34_PARTS_RIGHT_EYE = 30,
+	SL_BODY_34_PARTS_RIGHT_EAR = 31,
+	SL_BODY_34_PARTS_LEFT_HEEL = 32,
+	SL_BODY_34_PARTS_RIGHT_HEEL = 33,
+	SL_BODY_34_PARTS_LAST = 34;
+
+
+/**
+ * \brief semantic of human body parts and order of \ref ObjectData::keypoint for BODY_FORMAT::BODY_38.
+ */
+/** enum SL_BODY_38_PARTS */
+public static final int
+	SL_BODY_38_PARTS_PELVIS = 0,
+	SL_BODY_38_PARTS_SPINE_1 = 1,
+	SL_BODY_38_PARTS_SPINE_2 = 2,
+	SL_BODY_38_PARTS_SPINE_3 = 3,
+	SL_BODY_38_PARTS_NECK = 4,
+	SL_BODY_38_PARTS_NOSE = 5,
+	SL_BODY_38_PARTS_LEFT_EYE = 6,
+	SL_BODY_38_PARTS_RIGHT_EYE = 7,
+	SL_BODY_38_PARTS_LEFT_EAR = 8,
+	SL_BODY_38_PARTS_RIGHT_EAR = 9,
+	SL_BODY_38_PARTS_LEFT_CLAVICLE = 10,
+	SL_BODY_38_PARTS_RIGHT_CLAVICLE = 11,
+	SL_BODY_38_PARTS_LEFT_SHOULDER = 12,
+	SL_BODY_38_PARTS_RIGHT_SHOULDER = 13,
+	SL_BODY_38_PARTS_LEFT_ELBOW = 14,
+	SL_BODY_38_PARTS_RIGHT_ELBOW = 15,
+	SL_BODY_38_PARTS_LEFT_WRIST = 16,
+	SL_BODY_38_PARTS_RIGHT_WRIST = 17,
+	SL_BODY_38_PARTS_LEFT_HIP = 18,
+	SL_BODY_38_PARTS_RIGHT_HIP = 19,
+	SL_BODY_38_PARTS_LEFT_KNEE = 20,
+	SL_BODY_38_PARTS_RIGHT_KNEE = 21,
+	SL_BODY_38_PARTS_LEFT_ANKLE = 22,
+	SL_BODY_38_PARTS_RIGHT_ANKLE = 23,
+	SL_BODY_38_PARTS_LEFT_BIG_TOE = 24,
+	SL_BODY_38_PARTS_RIGHT_BIG_TOE = 25,
+	SL_BODY_38_PARTS_LEFT_SMALL_TOE = 26,
+	SL_BODY_38_PARTS_RIGHT_SMALL_TOE = 27,
+	SL_BODY_38_PARTS_LEFT_HEEL = 28,
+	SL_BODY_38_PARTS_RIGHT_HEEL = 29,
+	// Hands
+	SL_BODY_38_PARTS_LEFT_HAND_THUMB_4 = 30,
+	SL_BODY_38_PARTS_RIGHT_HAND_THUMB_4 = 31,
+	SL_BODY_38_PARTS_LEFT_HAND_INDEX_1 = 32,
+	SL_BODY_38_PARTS_RIGHT_HAND_INDEX_1 = 33,
+	SL_BODY_38_PARTS_LEFT_HAND_MIDDLE_4 = 34,
+	SL_BODY_38_PARTS_RIGHT_HAND_MIDDLE_4 = 35,
+	SL_BODY_38_PARTS_LEFT_HAND_PINKY_1 = 36,
+	SL_BODY_38_PARTS_RIGHT_HAND_PINKY_1 = 37,
+	SL_BODY_38_PARTS_LAST = 38;
+
+/**
+ * \brief semantic of human body parts and order of \ref ObjectData::keypoint for BODY_FORMAT::BODY_70.
+ */
+/** enum SL_BODY_70_PARTS */
+public static final int
+	SL_BODY_70_PARTS_PELVIS = 0,
+	SL_BODY_70_PARTS_SPINE_1 = 1,
+	SL_BODY_70_PARTS_SPINE_2 = 2,
+	SL_BODY_70_PARTS_SPINE_3 = 3,
+	SL_BODY_70_PARTS_NECK = 4,
+	SL_BODY_70_PARTS_NOSE = 5,
+	SL_BODY_70_PARTS_LEFT_EYE = 6,
+	SL_BODY_70_PARTS_RIGHT_EYE = 7,
+	SL_BODY_70_PARTS_LEFT_EAR = 8,
+	SL_BODY_70_PARTS_RIGHT_EAR = 9,
+	SL_BODY_70_PARTS_LEFT_CLAVICLE = 10,
+	SL_BODY_70_PARTS_RIGHT_CLAVICLE = 11,
+	SL_BODY_70_PARTS_LEFT_SHOULDER = 12,
+	SL_BODY_70_PARTS_RIGHT_SHOULDER = 13,
+	SL_BODY_70_PARTS_LEFT_ELBOW = 14,
+	SL_BODY_70_PARTS_RIGHT_ELBOW = 15,
+	SL_BODY_70_PARTS_LEFT_WRIST = 16,
+	SL_BODY_70_PARTS_RIGHT_WRIST = 17,
+	SL_BODY_70_PARTS_LEFT_HIP = 18,
+	SL_BODY_70_PARTS_RIGHT_HIP = 19,
+	SL_BODY_70_PARTS_LEFT_KNEE = 20,
+	SL_BODY_70_PARTS_RIGHT_KNEE = 21,
+	SL_BODY_70_PARTS_LEFT_ANKLE = 22,
+	SL_BODY_70_PARTS_RIGHT_ANKLE = 23,
+	SL_BODY_70_PARTS_LEFT_BIG_TOE = 24,
+	SL_BODY_70_PARTS_RIGHT_BIG_TOE = 25,
+	SL_BODY_70_PARTS_LEFT_SMALL_TOE = 26,
+	SL_BODY_70_PARTS_RIGHT_SMALL_TOE = 27,
+	SL_BODY_70_PARTS_LEFT_HEEL = 28,
+	SL_BODY_70_PARTS_RIGHT_HEEL = 29,
+	// Hands
+	// Left
+	SL_BODY_70_PARTS_LEFT_HAND_THUMB_1 = 30,
+	SL_BODY_70_PARTS_LEFT_HAND_THUMB_2 = 31,
+	SL_BODY_70_PARTS_LEFT_HAND_THUMB_3 = 32,
+	SL_BODY_70_PARTS_LEFT_HAND_THUMB_4 = 33,
+	SL_BODY_70_PARTS_LEFT_HAND_INDEX_1 = 34,
+	SL_BODY_70_PARTS_LEFT_HAND_INDEX_2 = 35,
+	SL_BODY_70_PARTS_LEFT_HAND_INDEX_3 = 36,
+	SL_BODY_70_PARTS_LEFT_HAND_INDEX_4 = 37,
+	SL_BODY_70_PARTS_LEFT_HAND_MIDDLE_1 = 38,
+	SL_BODY_70_PARTS_LEFT_HAND_MIDDLE_2 = 39,
+	SL_BODY_70_PARTS_LEFT_HAND_MIDDLE_3 = 40,
+	SL_BODY_70_PARTS_LEFT_HAND_MIDDLE_4 = 41,
+	SL_BODY_70_PARTS_LEFT_HAND_RING_1 = 42,
+	SL_BODY_70_PARTS_LEFT_HAND_RING_2 = 43,
+	SL_BODY_70_PARTS_LEFT_HAND_RING_3 = 44,
+	SL_BODY_70_PARTS_LEFT_HAND_RING_4 = 45,
+	SL_BODY_70_PARTS_LEFT_HAND_PINKY_1 = 46,
+	SL_BODY_70_PARTS_LEFT_HAND_PINKY_2 = 47,
+	SL_BODY_70_PARTS_LEFT_HAND_PINKY_3 = 48,
+	SL_BODY_70_PARTS_LEFT_HAND_PINKY_4 = 49,
+	//Right
+	SL_BODY_70_PARTS_RIGHT_HAND_THUMB_1 = 50,
+	SL_BODY_70_PARTS_RIGHT_HAND_THUMB_2 = 51,
+	SL_BODY_70_PARTS_RIGHT_HAND_THUMB_3 = 52,
+	SL_BODY_70_PARTS_RIGHT_HAND_THUMB_4 = 53,
+	SL_BODY_70_PARTS_RIGHT_HAND_INDEX_1 = 54,
+	SL_BODY_70_PARTS_RIGHT_HAND_INDEX_2 = 55,
+	SL_BODY_70_PARTS_RIGHT_HAND_INDEX_3 = 56,
+	SL_BODY_70_PARTS_RIGHT_HAND_INDEX_4 = 57,
+	SL_BODY_70_PARTS_RIGHT_HAND_MIDDLE_1 = 58,
+	SL_BODY_70_PARTS_RIGHT_HAND_MIDDLE_2 = 59,
+	SL_BODY_70_PARTS_RIGHT_HAND_MIDDLE_3 = 60,
+	SL_BODY_70_PARTS_RIGHT_HAND_MIDDLE_4 = 61,
+	SL_BODY_70_PARTS_RIGHT_HAND_RING_1 = 62,
+	SL_BODY_70_PARTS_RIGHT_HAND_RING_2 = 63,
+	SL_BODY_70_PARTS_RIGHT_HAND_RING_3 = 64,
+	SL_BODY_70_PARTS_RIGHT_HAND_RING_4 = 65,
+	SL_BODY_70_PARTS_RIGHT_HAND_PINKY_1 = 66,
+	SL_BODY_70_PARTS_RIGHT_HAND_PINKY_2 = 67,
+	SL_BODY_70_PARTS_RIGHT_HAND_PINKY_3 = 68,
+	SL_BODY_70_PARTS_RIGHT_HAND_PINKY_4 = 69,
+	SL_BODY_70_PARTS_LAST = 70;
+
+/**
+\brief Change the type of outputed position for the Fusion positional tracking (raw data or fusion data projected into zed camera)
+*/
+/** enum SL_POSITION_TYPE */
+public static final int
+	SL_POSITION_TYPE_RAW = 0, /*The output position will be the raw position data*/
+	SL_POSITION_TYPE_FUSION = 1, /*The output position will be the fused position projected into the requested camera repository*/
+	/**\cond SHOWHIDDEN  */
+	SL_POSITION_TYPE_LAST = 2;
+	/**\endcond */
 // Targeting ../SL_Resolution.java
 
 
@@ -899,6 +1107,12 @@ public static final int
 // Targeting ../SL_ObjectDetectionRuntimeParameters.java
 
 
+// Targeting ../SL_BodyTrackingParameters.java
+
+
+// Targeting ../SL_BodyTrackingRuntimeParameters.java
+
+
 // Targeting ../SL_ObjectData.java
 
 
@@ -908,14 +1122,110 @@ public static final int
 // Targeting ../SL_Objects.java
 
 
+// Targeting ../SL_BodyData.java
+
+
+// Targeting ../SL_Bodies.java
+
+
 // Targeting ../SL_ObjectsBatch.java
 
 
 // Targeting ../SL_Rect.java
 
 
+// Targeting ../SL_InputType.java
 
-// #endif
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////// FUSION API /////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/** enum SL_FUSION_ERROR_CODE */
+public static final int
+	SL_FUSION_ERROR_CODE_NO_NEW_DATA_AVAILABLE = -10, /** < All data from all sources were consumed, no new process available.*/
+	SL_FUSION_ERROR_CODE_INVALID_TIMESTAMP = -9, /** < Problem was detected with ingested timestamp*/
+	SL_FUSION_ERROR_CODE_INVALID_COVARIANCE = -8, /** < Problem was detected with ingested covariance */
+	/** The requested body tracking model is not available*/
+	SL_FUSION_ERROR_CODE_WRONG_BODY_FORMAT = -7,
+	/** The following module was not enabled*/
+	SL_FUSION_ERROR_CODE_NOT_ENABLE = -6,
+	/** Some source are provided by SVO and some sources are provided by LIVE stream */
+	SL_FUSION_ERROR_CODE_INPUT_FEED_MISMATCH = -5,
+	/** Connection timed out ... impossible to reach the sender... this may be due to ZedHub absence*/
+	SL_FUSION_ERROR_CODE_CONNECTION_TIMED_OUT = -4,
+	/** Detect multiple instance of SHARED_MEMORY communicator ... only one is authorised*/
+	SL_FUSION_ERROR_CODE_MEMORY_ALREADY_USED = -3,
+	/** The IP format provided is wrong, please provide IP in this format a.b.c.d where (a, b, c, d) are numbers between 0 and 255.*/
+	SL_FUSION_ERROR_CODE_BAD_IP_ADDRESS = -2,
+	/** Standard code for unsuccessful behavior.*/
+	SL_FUSION_ERROR_CODE_FAILURE = -1,
+	SL_FUSION_ERROR_CODE_SUCCESS = 0,
+	/** Some big differences has been observed between senders FPS*/
+	SL_FUSION_ERROR_CODE_FUSION_ERRATIC_FPS = 1,
+	/** At least one sender has fps lower than 10 FPS*/
+	SL_FUSION_ERROR_CODE_FUSION_FPS_TOO_LOW = 2;
+
+/** enum SL_SENDER_ERROR_CODE */
+public static final int
+	/** the sender has been disconnected*/
+	SL_SENDER_ERROR_CODE_DISCONNECTED = -1,
+	SL_SENDER_ERROR_CODE_SUCCESS = 0,
+	/** the sender has encountered an grab error*/
+	SL_SENDER_ERROR_CODE_GRAB_ERROR = 1,
+	/** the sender does not run with a constant frame rate*/
+	SL_SENDER_ERROR_CODE_ERRATIC_FPS = 2,
+	/** fps lower than 10 FPS*/
+	SL_SENDER_ERROR_CODE_FPS_TOO_LOW = 3;
+
+/** enum SL_COMM_TYPE */
+public static final int
+	SL_COMM_TYPE_LOCAL_NETWORK = 0, /* the sender and receiver are on the samed local network and communicate by RTP, communication can be affected by the network load.*/
+	SL_COMM_TYPE_INTRA_PROCESS = 1; /* both sender and receiver are declared by the same process, can be in different threads, this communication is optimized.*/
+// Targeting ../SL_CommunicationParameters.java
+
+
+// Targeting ../SL_FusionConfiguration.java
+
+
+// Targeting ../SL_InitFusionParameters.java
+
+
+// Targeting ../SL_PositionalTrackingFusionParameters.java
+
+
+// Targeting ../SL_BodyTrackingFusionParameters.java
+
+
+// Targeting ../SL_BodyTrackingFusionRuntimeParameters.java
+
+
+// Targeting ../SL_CameraIdentifier.java
+
+
+// Targeting ../SL_CameraMetrics.java
+
+
+// Targeting ../SL_FusionMetrics.java
+
+
+// Targeting ../SL_GNSSData.java
+
+
+// Targeting ../SL_LatLng.java
+
+
+// Targeting ../SL_GeoPose.java
+
+
+// Targeting ../SL_ECEF.java
+
+
+// Targeting ../SL_UTM.java
+
+
 
 // #endif
 
@@ -934,7 +1244,7 @@ public static final int
  * \file
  * */
 
-//#define DEBUG
+ //#define DEBUG
 // #ifdef _WIN32
 // #ifdef INTERFACE_NOEXPORT
 // #define INTERFACE_API
@@ -979,17 +1289,18 @@ public static final int
     */
     public static native @Cast("bool") boolean sl_create_camera(int camera_id);
 
-	/**
-	\brief Reports if the camera has been successfully opened.
-	@param camera_id : id of the camera.
-	@return true if the ZED is already setup, otherwise false.
-	*/
-	public static native @Cast("bool") boolean sl_is_opened(int camera_id);
+    /**
+    \brief Reports if the camera has been successfully opened.
+    @param camera_id : id of the camera.
+    @return true if the ZED is already setup, otherwise false.
+    */
+    public static native @Cast("bool") boolean sl_is_opened(int camera_id);
 
     /**
     \brief Opens the camera depending on the init parameters.
     @param camera_id : id of the camera.
     @param init_parameters : structure containing all the initial parameters.
+    @param serial number : serial number of the camera.
     @param path_svo : filename of the svo (for SVO input).
     @param ip : ip of the camera to open (for Stream input).
     @param stream_port : port of the camera to open (for Stream input).
@@ -998,13 +1309,16 @@ public static final int
     @param opencv_calib_path : optional openCV calibration file. Equivalent to  \ref InitParameters::optional_opencv_calibration_file.
     @return An error code giving information about the internal process. If SUCCESS (0) is returned, the camera is ready to use. Every other code indicates an error and the program should be stopped.
     */
-    public static native int sl_open_camera(int camera_id, SL_InitParameters init_parameters, @Cast("const char*") BytePointer path_svo, @Cast("const char*") BytePointer ip, int stream_port, @Cast("const char*") BytePointer output_file, @Cast("const char*") BytePointer opt_settings_path, @Cast("const char*") BytePointer opencv_calib_path);
-    public static native int sl_open_camera(int camera_id, SL_InitParameters init_parameters, String path_svo, String ip, int stream_port, String output_file, String opt_settings_path, String opencv_calib_path);
-	
-	/**
-	\brief Gets the Camera-created CUDA context for sharing it with other CUDA-capable libraries.
-	@param camera_id : id of the camera instance.
-	*/
+    public static native int sl_open_camera(int camera_id, SL_InitParameters init_parameters, @Cast("const unsigned int") int serial_number,  @Cast("const char*") BytePointer path_svo, @Cast("const char*") BytePointer ip, int stream_port, @Cast("const char*") BytePointer output_file, @Cast("const char*") BytePointer opt_settings_path, @Cast("const char*") BytePointer opencv_calib_path);
+    public static native int sl_open_camera(int camera_id, SL_InitParameters init_parameters, @Cast("const unsigned int") int serial_number,  String path_svo, String ip, int stream_port, String output_file, String opt_settings_path, String opencv_calib_path);
+
+
+    public static native void sl_start_publishing(int camera_id, SL_CommunicationParameters comm_params);
+
+    /**
+    \brief Gets the Camera-created CUDA context for sharing it with other CUDA-capable libraries.
+    @param camera_id : id of the camera instance.
+    */
 
     /**
     \brief Returns the initparameters used to open the ZED camera
@@ -1058,20 +1372,20 @@ public static final int
     public static native void sl_get_device_list(SL_DeviceProperties device_list, IntBuffer nb_devices);
     public static native void sl_get_device_list(SL_DeviceProperties device_list, int[] nb_devices);
 
-	/**
-	\brief List all the streaming devices with their associated information.
-	@param device_list [Out] : the devices properties for each connected camera.
-	@param nb_devices  [Out]: the number of cameras connected.
-	@return The streaming properties for each connected camera
-	 */
-	public static native void sl_get_streaming_device_list(SL_StreamingProperties streaming_device_list, IntPointer nb_devices);
-	public static native void sl_get_streaming_device_list(SL_StreamingProperties streaming_device_list, IntBuffer nb_devices);
-	public static native void sl_get_streaming_device_list(SL_StreamingProperties streaming_device_list, int[] nb_devices);
+    /**
+    \brief List all the streaming devices with their associated information.
+    @param device_list [Out] : the devices properties for each connected camera.
+    @param nb_devices  [Out]: the number of cameras connected.
+    @return The streaming properties for each connected camera
+     */
+    public static native void sl_get_streaming_device_list(SL_StreamingProperties streaming_device_list, IntPointer nb_devices);
+    public static native void sl_get_streaming_device_list(SL_StreamingProperties streaming_device_list, IntBuffer nb_devices);
+    public static native void sl_get_streaming_device_list(SL_StreamingProperties streaming_device_list, int[] nb_devices);
 
     /**
     \brief Performs an hardware reset of the ZED 2 / ZED 2i.
     @param sn : serial number of the camera to reset, or 0 to reset the first camera detected.
-	@param fullReboot : Perform a full reboot (Sensors and Video modules)
+    @param fullReboot : Perform a full reboot (Sensors and Video modules)
      */
     public static native int sl_reboot(int sn, @Cast("bool") boolean full_reboot);
 
@@ -1089,30 +1403,30 @@ public static final int
     public static native int sl_enable_recording(int camera_id, @Cast("const char*") BytePointer filename, @Cast("SL_SVO_COMPRESSION_MODE") int compression_mode, @Cast("unsigned int") int bitrate, int target_fps, @Cast("bool") boolean transcode);
     public static native int sl_enable_recording(int camera_id, String filename, @Cast("SL_SVO_COMPRESSION_MODE") int compression_mode, @Cast("unsigned int") int bitrate, int target_fps, @Cast("bool") boolean transcode);
 
-	/**
-	\brief Get the recording information
-	@return The recording state structure. For more details, see \ref RecordingStatus.
-	 */
-	public static native SL_RecordingStatus sl_get_recording_status(int camera_id);
+    /**
+    \brief Get the recording information
+    @return The recording state structure. For more details, see \ref RecordingStatus.
+     */
+    public static native SL_RecordingStatus sl_get_recording_status(int camera_id);
     /**
     \brief Disables the recording initiated by enableRecording() and closes the generated file.
     @param camera_id : id of the camera instance.
      */
     public static native void sl_disable_recording(int camera_id);
 
-	/**
-	\brief Returns the recording parameters used. Correspond to the structure send when the \ref sl_enable_recording() function was called.
-	@param camera_id : id of the camera instance.
-	@return \ref SL_RecordingParameters containing the parameters used for recording initialization.
-	 */
-	public static native SL_RecordingParameters sl_get_recording_parameters(int camera_id);
+    /**
+    \brief Returns the recording parameters used. Correspond to the structure send when the \ref sl_enable_recording() function was called.
+    @param camera_id : id of the camera instance.
+    @return \ref SL_RecordingParameters containing the parameters used for recording initialization.
+     */
+    public static native SL_RecordingParameters sl_get_recording_parameters(int camera_id);
 
-	/**
-	\brief Pauses or resumes the recording.
-	@param camera_id : id of the camera instance.
-	@param status : if true, the recording is paused. If false, the recording is resumed.
-	 */
-	public static native void sl_pause_recording(int camera_id, @Cast("bool") boolean status);
+    /**
+    \brief Pauses or resumes the recording.
+    @param camera_id : id of the camera instance.
+    @param status : if true, the recording is paused. If false, the recording is resumed.
+     */
+    public static native void sl_pause_recording(int camera_id, @Cast("bool") boolean status);
 
     /**
     \brief Initializes and starts the positional tracking processes.
@@ -1140,16 +1454,16 @@ public static final int
     @param area_file_path : area localization file that describes the surroundings, saved from a previous tracking session.
     @return \ref SL_ERROR_CODE::SUCCESS if everything went fine, ERROR_CODE::FAILURE otherwise.
      */
-    /**INTERFACE_API int enable_positional_tracking(int camera_id, struct SL_Quaternion *initial_world_rotation, struct SL_Vector3 *initial_world_position, bool enable_area_memory, bool enable_pose_smoothing, bool set_floor_as_origin, bool set_as_static,
-            bool enable_imu_fusion, const char* area_file_path);*/
-    /**
-    \brief Disables the positional tracking.
-    @param camera_id : id of the camera instance.
-    @param area_file_path : if set, saves the spatial memory into an '.area' file.
-     */
+     /**INTERFACE_API int enable_positional_tracking(int camera_id, struct SL_Quaternion *initial_world_rotation, struct SL_Vector3 *initial_world_position, bool enable_area_memory, bool enable_pose_smoothing, bool set_floor_as_origin, bool set_as_static,
+             bool enable_imu_fusion, const char* area_file_path);*/
+             /**
+             \brief Disables the positional tracking.
+             @param camera_id : id of the camera instance.
+             @param area_file_path : if set, saves the spatial memory into an '.area' file.
+              */
     public static native void sl_disable_positional_tracking(int camera_id, @Cast("const char*") BytePointer area_file_path);
     public static native void sl_disable_positional_tracking(int camera_id, String area_file_path);
-	
+
     /**
     \brief Saves the current area learning file. The file will contain spatial memory data generated by the tracking.
     @param camera_id : id of the camera instance.
@@ -1182,12 +1496,12 @@ public static final int
      */
     public static native float sl_get_camera_fps(int camera_id);
 
-	/**
-	\brief Returns the current FPS.
-	@param camera_id : id of the camera instance.
-	@return The current frame rate.
-		*/
-	public static native float sl_get_current_fps(int camera_id);
+    /**
+    \brief Returns the current FPS.
+    @param camera_id : id of the camera instance.
+    @return The current frame rate.
+        */
+    public static native float sl_get_current_fps(int camera_id);
 
     /**
     \brief Returns the width of the current image.
@@ -1210,14 +1524,14 @@ public static final int
      */
     public static native int sl_get_confidence_threshold(int camera_id);
 
-	/**
-	\brief Returns the calibration parameters, serial number and other information about the camera being used.
-	@param camera_id : id of the camera instance.
-	@param res_width : You can specify a size different from default image size to get the scaled camera information.
-	@param res_height : You can specify a size different from default image size to get the scaled camera information.
-	@return SL_CameraInformation containing the calibration parameters of the ZED, as well as serial number and firmware version.
-	 */
-	public static native SL_CameraInformation sl_get_camera_information(int camera_id, int res_width, int res_height);
+    /**
+    \brief Returns the calibration parameters, serial number and other information about the camera being used.
+    @param camera_id : id of the camera instance.
+    @param res_width : You can specify a size different from default image size to get the scaled camera information.
+    @param res_height : You can specify a size different from default image size to get the scaled camera information.
+    @return SL_CameraInformation containing the calibration parameters of the ZED, as well as serial number and firmware version.
+     */
+    public static native SL_CameraInformation sl_get_camera_information(int camera_id, int res_width, int res_height);
 
     /**
     \brief Performs a new self calibration process.
@@ -1311,7 +1625,7 @@ public static final int
     @param mode : Setting to be changed
     @param value : new value
      */
-    public static native void sl_set_camera_settings(int camera_id, @Cast("SL_VIDEO_SETTINGS") int mode, int value);
+    public static native @Cast("SL_ERROR_CODE") int sl_set_camera_settings(int camera_id, @Cast("SL_VIDEO_SETTINGS") int mode, int value);
 
     /**
     \brief Sets the region of interest for automatic exposure/gain computation
@@ -1321,15 +1635,18 @@ public static final int
     @param reset : reset aestruct C_agc if true.
     @return SL_ERROR_CODE::SUCCESS if ROI has been applied. Other ERROR_CODE otherwise.
      */
-    public static native int sl_set_roi_for_aec_agc(int camera_id, @Cast("SL_SIDE") int side, SL_Rect roi, @Cast("bool") boolean reset);
+    public static native @Cast("SL_ERROR_CODE") int sl_set_roi_for_aec_agc(int camera_id, @Cast("SL_SIDE") int side, SL_Rect roi, @Cast("bool") boolean reset);
 
     /**
     \brief Gets the value of a given setting from the ZED camera.
     @param camera_id : id of the camera instance.
     @param mode : Setting to be retrieved (see \ref SL_VIDEO_SETTINGS).
-    @return The current value for the corresponding setting. Returns -1 if encounters an error.
+    @param value : the requested setting value.
+    @return ERROR_CODE to indicate if the function was successfull.If successfull, setting will be filled with the corresponding value.
      */
-    public static native int sl_get_camera_settings(int camera_id, @Cast("SL_VIDEO_SETTINGS") int mode);
+    public static native @Cast("SL_ERROR_CODE") int sl_get_camera_settings(int c_id, @Cast("SL_VIDEO_SETTINGS") int mode, IntPointer value);
+    public static native @Cast("SL_ERROR_CODE") int sl_get_camera_settings(int c_id, @Cast("SL_VIDEO_SETTINGS") int mode, IntBuffer value);
+    public static native @Cast("SL_ERROR_CODE") int sl_get_camera_settings(int c_id, @Cast("SL_VIDEO_SETTINGS") int mode, int[] value);
 
     /**
     \brief Gets the region of interest for automatic exposure/gain computation
@@ -1338,7 +1655,7 @@ public static final int
     @param roi [Out] : Region of interest.
     @return SL_ERROR_CODE::SUCCESS if ROI has been applied. Other ERROR_CODE otherwise.
      */
-    public static native int sl_get_roi_for_aec_agc(int id, @Cast("SL_SIDE") int side, SL_Rect roi);
+    public static native @Cast("SL_ERROR_CODE") int sl_get_roi_for_aec_agc(int id, @Cast("SL_SIDE") int side, SL_Rect roi);
 
     /**
     \brief Gets the depth min value from InitParameters (see \ref SL_InitParameters::depth_minimum_distance).
@@ -1361,9 +1678,9 @@ public static final int
     @param max : \b [out] Maximum depth detected (in selected sl::UNIT)
     @return SL_ERROR_CODE::SUCCESS if values have been extracted. Other ERROR_CODE otherwise.
      */
-    public static native int sl_get_current_min_max_depth(int camera_id,FloatPointer min, FloatPointer max);
-    public static native int sl_get_current_min_max_depth(int camera_id,FloatBuffer min, FloatBuffer max);
-    public static native int sl_get_current_min_max_depth(int camera_id,float[] min, float[] max);
+    public static native int sl_get_current_min_max_depth(int camera_id, FloatPointer min, FloatPointer max);
+    public static native int sl_get_current_min_max_depth(int camera_id, FloatBuffer min, FloatBuffer max);
+    public static native int sl_get_current_min_max_depth(int camera_id, float[] min, float[] max);
 
     /**
     \brief Gets the number of zed connected.
@@ -1377,28 +1694,28 @@ public static final int
      */
     public static native @Cast("char*") BytePointer sl_get_sdk_version();
 
-	/**
-	\brief Change the coordinate system of a transform matrix.
-	@param rotation [In, Out] : rotation to transform.
-	@param translation [In, Out] : translation to transform.
-	@param coord_system_src : the current coordinate system of the translation/rotation.
-	@param coord_system_dest: the destination coordinate system for the translation/rotation.
-	 */
-	public static native int sl_convert_coordinate_system(SL_Quaternion rotation, SL_Vector3 translation, @Cast("SL_COORDINATE_SYSTEM") int coord_system_src, @Cast("SL_COORDINATE_SYSTEM") int coord_system_dest);
-
-	/**
-	\brief Returns the version of the currently installed ZED SDK.
-	@param major : major int of the version filled
-	@param minor : minor int of the version filled
-	@param patch : patch int of the version filled
-	 */
-	//INTERFACE_API void sl_get_sdk_version(int *major, int *minor, int *patch);
+    /**
+    \brief Change the coordinate system of a transform matrix.
+    @param rotation [In, Out] : rotation to transform.
+    @param translation [In, Out] : translation to transform.
+    @param coord_system_src : the current coordinate system of the translation/rotation.
+    @param coord_system_dest: the destination coordinate system for the translation/rotation.
+     */
+    public static native int sl_convert_coordinate_system(SL_Quaternion rotation, SL_Vector3 translation, @Cast("SL_COORDINATE_SYSTEM") int coord_system_src, @Cast("SL_COORDINATE_SYSTEM") int coord_system_dest);
 
     /**
-    \brief Gets the current position of the SVO being recorded to.
-    @param camera_id : id of the camera instance.
-    @return The current SVO position;
+    \brief Returns the version of the currently installed ZED SDK.
+    @param major : major int of the version filled
+    @param minor : minor int of the version filled
+    @param patch : patch int of the version filled
      */
+     //INTERFACE_API void sl_get_sdk_version(int *major, int *minor, int *patch);
+
+     /**
+     \brief Gets the current position of the SVO being recorded to.
+     @param camera_id : id of the camera instance.
+     @return The current SVO position;
+      */
     public static native int sl_get_svo_position(int camera_id);
 
     /**
@@ -1413,12 +1730,12 @@ public static final int
     ////////////////////////////////////////////////////////////////// Motion tracking ///////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	/**
-	\brief Gets the current position of the camera and state of the tracking, with an optional offset to the tracking frame.
-	@param camera_id : id of the camera instance.
-	@return true if the tracking module is enabled
-	*/
-	public static native @Cast("bool") boolean sl_is_positional_tracking_enabled(int camera_id);
+    /**
+    \brief Gets the current position of the camera and state of the tracking, with an optional offset to the tracking frame.
+    @param camera_id : id of the camera instance.
+    @return true if the tracking module is enabled
+    */
+    public static native @Cast("bool") boolean sl_is_positional_tracking_enabled(int camera_id);
 
     /**
     \brief Gets the current position of the camera and state of the tracking, with an optional offset to the tracking frame.
@@ -1500,7 +1817,7 @@ public static final int
     @param time_reference : time reference.
     @return ERROR_CODE::SUCCESS if sensors data have been extracted.
      */
-    public static native int sl_get_sensors_data(int camera_id, SL_SensorData data, @Cast("SL_TIME_REFERENCE") int time_reference);
+    public static native int sl_get_sensors_data(int camera_id, SL_SensorsData data, @Cast("SL_TIME_REFERENCE") int time_reference);
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1541,12 +1858,12 @@ public static final int
      */
     public static native void sl_disable_spatial_mapping(int camera_id);
 
-	/**
-	\brief Returns the spatial mapping parameters used. Correspond to the structure send when the \ref enableSpatialMapping() function was called.
-	@param camera_id : id of the camera instance.
-	@return \ref SpatialMappingParameters containing the parameters used for spatial mapping intialization.
-	 */
-	public static native SL_SpatialMappingParameters sl_get_spatial_mapping_parameters(int camera_id);
+    /**
+    \brief Returns the spatial mapping parameters used. Correspond to the structure send when the \ref enableSpatialMapping() function was called.
+    @param camera_id : id of the camera instance.
+    @return \ref SpatialMappingParameters containing the parameters used for spatial mapping intialization.
+     */
+    public static native SL_SpatialMappingParameters sl_get_spatial_mapping_parameters(int camera_id);
     /**
      Sets the pause state of the data integration mechanism for the ZED's spatial mapping.
      @param camera_id : id of the camera instance.
@@ -1591,14 +1908,15 @@ public static final int
     @param camera_id : id of the camera instance.
     @param vertices : Vertices of the mesh
     @param triangles : Triangles of the mesh.
+    @param colors :  (b,g,r) colors of each vertex.
     @param max_submeshes : Maximum number of submesh that can be handled.
     @param uvs : uvs of the texture.
     @param texture_ptr : Texture of the mesh (if enabled).
     @return SUCCESS if the mesh is retrieved.
      */
-    public static native int sl_retrieve_mesh(int camera_id, FloatPointer vertices, IntPointer triangles, FloatPointer uvs, @Cast("unsigned char*") BytePointer texture_ptr, int max_submeshes);
-    public static native int sl_retrieve_mesh(int camera_id, FloatBuffer vertices, IntBuffer triangles, FloatBuffer uvs, @Cast("unsigned char*") ByteBuffer texture_ptr, int max_submeshes);
-    public static native int sl_retrieve_mesh(int camera_id, float[] vertices, int[] triangles, float[] uvs, @Cast("unsigned char*") byte[] texture_ptr, int max_submeshes);
+    public static native int sl_retrieve_mesh(int camera_id, FloatPointer vertices, IntPointer triangles, @Cast("unsigned char*") BytePointer colors, FloatPointer uvs, @Cast("unsigned char*") BytePointer texture_ptr, int max_submeshes);
+    public static native int sl_retrieve_mesh(int camera_id, FloatBuffer vertices, IntBuffer triangles, @Cast("unsigned char*") ByteBuffer colors, FloatBuffer uvs, @Cast("unsigned char*") ByteBuffer texture_ptr, int max_submeshes);
+    public static native int sl_retrieve_mesh(int camera_id, float[] vertices, int[] triangles, @Cast("unsigned char*") byte[] colors, float[] uvs, @Cast("unsigned char*") byte[] texture_ptr, int max_submeshes);
     /**
     \brief Updates the internal version of the mesh and returns the sizes of the meshes.
     @param camera_id : id of the camera instance.
@@ -1621,13 +1939,14 @@ public static final int
     @param max_submesh : Maximum number of submesh that can be handled.
     @param vertices : Vertices of the chunk
     @param triangles : Triangles of the chunk.
+    @param colors : b,g,r colors of the chunk
     @param uvs : uvs of the texture.
     @param texture_ptr : Texture of the mesh (if enabled).
     @return SUCCESS if the chunk is retrieved.
      */
-    public static native int sl_retrieve_chunks(int camera_id, FloatPointer vertices, IntPointer triangles, FloatPointer uvs, @Cast("unsigned char*") BytePointer texture_ptr, int max_submesh);
-    public static native int sl_retrieve_chunks(int camera_id, FloatBuffer vertices, IntBuffer triangles, FloatBuffer uvs, @Cast("unsigned char*") ByteBuffer texture_ptr, int max_submesh);
-    public static native int sl_retrieve_chunks(int camera_id, float[] vertices, int[] triangles, float[] uvs, @Cast("unsigned char*") byte[] texture_ptr, int max_submesh);
+    public static native int sl_retrieve_chunks(int camera_id, FloatPointer vertices, IntPointer triangles, @Cast("unsigned char*") BytePointer colors, FloatPointer uvs, @Cast("unsigned char*") BytePointer texture_ptr, int max_submesh);
+    public static native int sl_retrieve_chunks(int camera_id, FloatBuffer vertices, IntBuffer triangles, @Cast("unsigned char*") ByteBuffer colors, FloatBuffer uvs, @Cast("unsigned char*") ByteBuffer texture_ptr, int max_submesh);
+    public static native int sl_retrieve_chunks(int camera_id, float[] vertices, int[] triangles, @Cast("unsigned char*") byte[] colors, float[] uvs, @Cast("unsigned char*") byte[] texture_ptr, int max_submesh);
 
     /**
     \brief Updates the fused point cloud (if spatial map type was FUSED_POINT_CLOUD).
@@ -1662,15 +1981,15 @@ public static final int
      */
     public static native @Cast("bool") boolean sl_save_mesh(int camera_id, @Cast("const char*") BytePointer filename, @Cast("SL_MESH_FILE_FORMAT") int format);
     public static native @Cast("bool") boolean sl_save_mesh(int camera_id, String filename, @Cast("SL_MESH_FILE_FORMAT") int format);
-	/**
-	\brief Saves the scanned point cloud in a specific file format.
-	@param camera_id : id of the camera instance.
-	@param filename : Path and filename of the point cloud.
-	@param format : File format (extension). Can be .obj, .ply or .bin.
-	@return True if the file was successfully saved, false otherwise.
-	 */
-	public static native @Cast("bool") boolean sl_save_point_cloud(int c_id, @Cast("const char*") BytePointer filename, @Cast("SL_MESH_FILE_FORMAT") int format);
-	public static native @Cast("bool") boolean sl_save_point_cloud(int c_id, String filename, @Cast("SL_MESH_FILE_FORMAT") int format);
+    /**
+    \brief Saves the scanned point cloud in a specific file format.
+    @param camera_id : id of the camera instance.
+    @param filename : Path and filename of the point cloud.
+    @param format : File format (extension). Can be .obj, .ply or .bin.
+    @return True if the file was successfully saved, false otherwise.
+     */
+    public static native @Cast("bool") boolean sl_save_point_cloud(int c_id, @Cast("const char*") BytePointer filename, @Cast("SL_MESH_FILE_FORMAT") int format);
+    public static native @Cast("bool") boolean sl_save_point_cloud(int c_id, String filename, @Cast("SL_MESH_FILE_FORMAT") int format);
     /**
     \brief Loads a saved mesh file.
     @param camera_id : id of the camera instance.
@@ -1685,12 +2004,12 @@ public static final int
     @param texture_size : Array containing the sizes of all the textures (width ,height) if applicable.
     @return True if the file was successfully loaded, false otherwise.
      */
-    public static native @Cast("bool") boolean sl_load_mesh(int camera_id, @Cast("const char*") BytePointer filename, IntPointer nb_vertices_per_submesh, IntPointer nb_triangles_per_submesh, IntPointer num_submeshes, IntPointer updated_indices, IntPointer nb_vertices_tot, IntPointer nb_triangles_tot, IntPointer textures_size,int max_submesh);
-    public static native @Cast("bool") boolean sl_load_mesh(int camera_id, String filename, IntBuffer nb_vertices_per_submesh, IntBuffer nb_triangles_per_submesh, IntBuffer num_submeshes, IntBuffer updated_indices, IntBuffer nb_vertices_tot, IntBuffer nb_triangles_tot, IntBuffer textures_size,int max_submesh);
-    public static native @Cast("bool") boolean sl_load_mesh(int camera_id, @Cast("const char*") BytePointer filename, int[] nb_vertices_per_submesh, int[] nb_triangles_per_submesh, int[] num_submeshes, int[] updated_indices, int[] nb_vertices_tot, int[] nb_triangles_tot, int[] textures_size,int max_submesh);
-    public static native @Cast("bool") boolean sl_load_mesh(int camera_id, String filename, IntPointer nb_vertices_per_submesh, IntPointer nb_triangles_per_submesh, IntPointer num_submeshes, IntPointer updated_indices, IntPointer nb_vertices_tot, IntPointer nb_triangles_tot, IntPointer textures_size,int max_submesh);
-    public static native @Cast("bool") boolean sl_load_mesh(int camera_id, @Cast("const char*") BytePointer filename, IntBuffer nb_vertices_per_submesh, IntBuffer nb_triangles_per_submesh, IntBuffer num_submeshes, IntBuffer updated_indices, IntBuffer nb_vertices_tot, IntBuffer nb_triangles_tot, IntBuffer textures_size,int max_submesh);
-    public static native @Cast("bool") boolean sl_load_mesh(int camera_id, String filename, int[] nb_vertices_per_submesh, int[] nb_triangles_per_submesh, int[] num_submeshes, int[] updated_indices, int[] nb_vertices_tot, int[] nb_triangles_tot, int[] textures_size,int max_submesh);
+    public static native @Cast("bool") boolean sl_load_mesh(int camera_id, @Cast("const char*") BytePointer filename, IntPointer nb_vertices_per_submesh, IntPointer nb_triangles_per_submesh, IntPointer num_submeshes, IntPointer updated_indices, IntPointer nb_vertices_tot, IntPointer nb_triangles_tot, IntPointer textures_size, int max_submesh);
+    public static native @Cast("bool") boolean sl_load_mesh(int camera_id, String filename, IntBuffer nb_vertices_per_submesh, IntBuffer nb_triangles_per_submesh, IntBuffer num_submeshes, IntBuffer updated_indices, IntBuffer nb_vertices_tot, IntBuffer nb_triangles_tot, IntBuffer textures_size, int max_submesh);
+    public static native @Cast("bool") boolean sl_load_mesh(int camera_id, @Cast("const char*") BytePointer filename, int[] nb_vertices_per_submesh, int[] nb_triangles_per_submesh, int[] num_submeshes, int[] updated_indices, int[] nb_vertices_tot, int[] nb_triangles_tot, int[] textures_size, int max_submesh);
+    public static native @Cast("bool") boolean sl_load_mesh(int camera_id, String filename, IntPointer nb_vertices_per_submesh, IntPointer nb_triangles_per_submesh, IntPointer num_submeshes, IntPointer updated_indices, IntPointer nb_vertices_tot, IntPointer nb_triangles_tot, IntPointer textures_size, int max_submesh);
+    public static native @Cast("bool") boolean sl_load_mesh(int camera_id, @Cast("const char*") BytePointer filename, IntBuffer nb_vertices_per_submesh, IntBuffer nb_triangles_per_submesh, IntBuffer num_submeshes, IntBuffer updated_indices, IntBuffer nb_vertices_tot, IntBuffer nb_triangles_tot, IntBuffer textures_size, int max_submesh);
+    public static native @Cast("bool") boolean sl_load_mesh(int camera_id, String filename, int[] nb_vertices_per_submesh, int[] nb_triangles_per_submesh, int[] num_submeshes, int[] updated_indices, int[] nb_vertices_tot, int[] nb_triangles_tot, int[] textures_size, int max_submesh);
     /**
     \brief Applies the scanned texture onto the internal scanned mesh.
     @param camera_id : id of the camera instance.
@@ -1749,15 +2068,16 @@ public static final int
     \brief Retrieves the full mesh. Call update_mesh before calling this.
     Vertex and triangles arrays must be at least of the sizes returned by update_mesh (nb_vertices and nbTriangles).
     @param camera_id : id of the camera instance.
-    @param vertices : Vertices of the chunk
-    @param triangles : Triangles of the chunk.
+    @param vertices : Vertices of the mesh
+    @param triangles : Triangles of the mesh.
+    @param colors : (b,g,r) colors of the mesh.
     @param uvs : uvs of the texture.
     @param texture_ptr : Texture of the mesh (if enabled).
     @return SUCCESS if the chunk is retrieved.
      */
-    public static native int sl_retrieve_whole_mesh(int camera_id, FloatPointer vertices, IntPointer triangles, FloatPointer uvs, @Cast("unsigned char*") BytePointer texture_ptr);
-    public static native int sl_retrieve_whole_mesh(int camera_id, FloatBuffer vertices, IntBuffer triangles, FloatBuffer uvs, @Cast("unsigned char*") ByteBuffer texture_ptr);
-    public static native int sl_retrieve_whole_mesh(int camera_id, float[] vertices, int[] triangles, float[] uvs, @Cast("unsigned char*") byte[] texture_ptr);
+    public static native int sl_retrieve_whole_mesh(int camera_id, FloatPointer vertices, IntPointer triangles, @Cast("unsigned char*") BytePointer colors,  FloatPointer uvs, @Cast("unsigned char*") BytePointer texture_ptr);
+    public static native int sl_retrieve_whole_mesh(int camera_id, FloatBuffer vertices, IntBuffer triangles, @Cast("unsigned char*") ByteBuffer colors,  FloatBuffer uvs, @Cast("unsigned char*") ByteBuffer texture_ptr);
+    public static native int sl_retrieve_whole_mesh(int camera_id, float[] vertices, int[] triangles, @Cast("unsigned char*") byte[] colors,  float[] uvs, @Cast("unsigned char*") byte[] texture_ptr);
     /**
     \brief Loads a saved mesh file.
     @param camera_id : id of the camera instance.
@@ -1911,12 +2231,12 @@ public static final int
     @return An ERROR_CODE that defines if the stream was started.
      */
     public static native int sl_enable_streaming(int camera_id, @Cast("SL_STREAMING_CODEC") int codec, @Cast("unsigned int") int bitrate, @Cast("unsigned short") short port, int gop_size, int adaptative_bitrate, int chunk_size, int target_framerate);
-	
-	/**
-	\brief Disables the streaming initiated by enable_streaming().
-	@param camera_id : id of the camera instance.
-	 */
-	public static native void sl_disable_streaming(int camera_id);
+
+    /**
+    \brief Disables the streaming initiated by enable_streaming().
+    @param camera_id : id of the camera instance.
+     */
+    public static native void sl_disable_streaming(int camera_id);
     /**
     \brief Tells if the streaming is running (true) or still initializing (false).
     @param camera_id : id of the camera instance.
@@ -1924,11 +2244,11 @@ public static final int
      */
     public static native int sl_is_streaming_enabled(int camera_id);
 
-	/**
-	\brief Returns the streaming parameters used. Correspond to the structure send when the \ref sl_enable_streaming() function was called.
-	@return \ref SL_StreamingParameters containing the parameters used for streaming initialization.
-	 */
-	public static native SL_StreamingParameters sl_get_streaming_parameters(int camera_id);
+    /**
+    \brief Returns the streaming parameters used. Correspond to the structure send when the \ref sl_enable_streaming() function was called.
+    @return \ref SL_StreamingParameters containing the parameters used for streaming initialization.
+     */
+    public static native SL_StreamingParameters sl_get_streaming_parameters(int camera_id);
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////// Save to File Utils ////////////////////////////////////////////////////////////////////
@@ -1970,21 +2290,21 @@ public static final int
     ////////////////////////////////////////////////////////////////// Object Detection //////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	 /**
-		\brief Check if a corresponding optimized engine is found for the requested Model based on your rig configuration.
-		@param model : AI model to check.
-		@param gpu_id : ID of the gpu.
-		@return The status of the given model for the specified GPU.
-	*/
-	public static native SL_AI_Model_status sl_check_AI_model_status(@Cast("SL_AI_MODELS") int model, int gpu_id);
+     /**
+        \brief Check if a corresponding optimized engine is found for the requested Model based on your rig configuration.
+        @param model : AI model to check.
+        @param gpu_id : ID of the gpu.
+        @return The status of the given model for the specified GPU.
+    */
+    public static native SL_AI_Model_status sl_check_AI_model_status(@Cast("SL_AI_MODELS") int model, int gpu_id);
 
-	/**
-	\brief Optimize the requested model, possible download if the model is not present on the host.
-	@param model : AI model to optimize.
-	@param gpu_id : ID of the gpu to optimize on.
-	@return SUCCESS if the model is well optimized.
-	*/
-	public static native int sl_optimize_AI_model(@Cast("SL_AI_MODELS") int model, int gpu_id);
+    /**
+    \brief Optimize the requested model, possible download if the model is not present on the host.
+    @param model : AI model to optimize.
+    @param gpu_id : ID of the gpu to optimize on.
+    @return SUCCESS if the model is well optimized.
+    */
+    public static native int sl_optimize_AI_model(@Cast("SL_AI_MODELS") int model, int gpu_id);
 
     /**
     \brief Initializes and starts the Deep Learning detection module.
@@ -2005,14 +2325,14 @@ public static final int
              - \ref ERROR_CODE::INVALID_FUNCTION_CALL : if one of the ObjectDetection parameter is not compatible with other modules parameters (For example, depth mode has been set to NONE).\n
              - \ref ERROR_CODE::FAILURE : otherwise.\n
      */
-    public static native int sl_enable_objects_detection(int camera_id, SL_ObjectDetectionParameters object_detection_parameters);
+    public static native int sl_enable_object_detection(int camera_id, SL_ObjectDetectionParameters object_detection_parameters);
 
-	/**
-	\brief Returns the object detection parameters used. Correspond to the structure send when the \ref enableObjectDetection() function was called.
-	@param camera_id : id of the camera instance.
-	@return \ref ObjectDetectionParameters containing the parameters used for object detection initialization.
-	 */
-	public static native SL_ObjectDetectionParameters sl_get_object_detection_parameters(int cmaera_id);
+    /**
+    \brief Returns the object detection parameters used. Correspond to the structure send when the \ref enableObjectDetection() function was called.
+    @param camera_id : id of the camera instance.
+    @return \ref ObjectDetectionParameters containing the parameters used for object detection initialization.
+     */
+    public static native SL_ObjectDetectionParameters sl_get_object_detection_parameters(int camera_id);
 
     /**
     \brief Pauses or resumes the object detection processes.
@@ -2023,34 +2343,84 @@ public static final int
     The \ref retrieveObjects function will keep on returning the last objects detected while in pause.
     <p>
     @param status : If true, object detection is paused. If false, object detection is resumed.
+    \params instance_id . Id of the Object detection instance. Used when multiple instances of the OD module are enabled at the same time.
      */
-    public static native void sl_pause_objects_detection(int camera_id, @Cast("bool") boolean status);
+    public static native void sl_pause_object_detection(int camera_id, @Cast("bool") boolean status, @Cast("unsigned int") int instance_id);
     /**
     \brief Disables the Object Detection process.
     <p>
     The object detection module immediately stops and frees its memory allocations.
     @param camera_id : id of the camera instance.
+    \params instance_id : Id of the Object detection instance. Used when multiple instances of the OD module are enabled at the same time.
+    \params force_disable_all_instances : Disable all the instances of the OD module currently enabled.
      */
-    public static native void sl_disable_objects_detection(int camera_id);
+    public static native void sl_disable_object_detection(int camera_id, @Cast("unsigned int") int instance_id, @Cast("bool") boolean force_disable_all_instances);
 
-	/**
-	\brief Generate a UUID like unique ID to help identify and track AI detections
-	@param uuid : Unique ID generated.
-	@return : Size of the unique ID generated.
-	 */
-	public static native int sl_generate_unique_id(@Cast("char*") BytePointer uuid);
-	public static native int sl_generate_unique_id(@Cast("char*") ByteBuffer uuid);
-	public static native int sl_generate_unique_id(@Cast("char*") byte[] uuid);
+    /**
+    \brief Initializes and starts the Deep Learning detection module.
+    - Human skeleton detection with the \ref DETECTION_MODEL::HUMAN_BODY_FAST,\ref DETECTION_MODEL::HUMAN_BODY_MEDIUM or \ref DETECTION_MODEL::HUMAN_BODY_ACCURATE.
+    This model only detects humans but also provides a full skeleton map for each person.
+    <p>
+    Detected objects can be retrieved using the \ref retrieve_bodies() function.
+    @param camera_id : id of the camera instance.
+    @param object_detection_parameters : structure containing all specific parameters for object detection (see \ref SL_BodyTrackingParameters).
+    @return
+             - \ref ERROR_CODE::SUCCESS : if everything went fine.\n
+             - \ref ERROR_CODE::CORRUPTED_SDK_INSTALLATION : if the AI model is missing or corrupted. In this case, the SDK needs to be reinstalled.\n
+             - \ref ERROR_CODE::MODULE_NOT_COMPATIBLE_WITH_CAMERA : if the camera used does not have a IMU (ZED Camera). the IMU gives the gravity vector that helps in the 3D box localization.\n
+             - \ref ERROR_CODE::MOTION_SENSORS_REQUIRED : if the camera model is correct (ZED2/ZED2i) but the IMU is missing. It probably happens because InitParameters::disable_sensors was set to true.\n
+             - \ref ERROR_CODE::INVALID_FUNCTION_CALL : if one of the ObjectDetection parameter is not compatible with other modules parameters (For example, depth mode has been set to NONE).\n
+             - \ref ERROR_CODE::FAILURE : otherwise.\n
+     */
+    public static native int sl_enable_body_tracking(int camera_id, SL_BodyTrackingParameters body_tracking_parameters);
 
-	/**
-	\brief Feed the 3D Object tracking function with your own 2D bounding boxes from your own detection algorithm.
-	@param camera_id : id of the camera instance.
-	@param objects_in : 2D detections from custom detection algorithm.
-	@param nb_objects : number of custom objects (size of the object_in array).
-	\note The detection should be done on the current grabbed left image as the internal process will use all current available data to extract 3D informations and perform object tracking.
-	@return \ref SUCCESS if everything went fine, \ref ERROR_CODE::FAILURE otherwise
+    /**
+    \brief Returns the object detection parameters used. Correspond to the structure send when the \ref sl_enable_body_tracking() function was called.
+    <p>
+    @return \ref BodyTrackingParameters containing the parameters used for object detection initialization.
+     */
+    public static native SL_BodyTrackingParameters sl_get_body_tracking_parameters(int camera_id);
+
+    /**
+    \brief Pauses or resumes the body tracking processes.
+    <p>
+    If the body tracking has been enabled with  \ref BodyTrackingParameters::image_sync set to false (running asynchronously), this function will pause processing.
+    <p>
+    While in pause, calling this function with <i>status = false</i> will resume the body tracking.
+    The \ref retrieveBodies function will keep on returning the last objects detected while in pause.
+    <p>
+    @param status : If true, body tracking is paused. If false, object detection is resumed.
+    \params instance_id . Id of the body tracking instance. Used when multiple instances of the BT module are enabled at the same time.
+     */
+    public static native void sl_pause_body_tracking(int camera_id, @Cast("bool") boolean status, @Cast("unsigned int") int instance_id);
+    /**
+    \brief Disables the body tracking process.
+    <p>
+    The body tracking module immediately stops and frees its memory allocations.
+    @param camera_id : id of the camera instance.
+    \params instance_id : Id of the Object detection instance. Used when multiple instances of the BT module are enabled at the same time.
+    \params force_disable_all_instances : Disable all the instances of the BT module currently enabled.
+     */
+    public static native void sl_disable_body_tracking(int camera_id, @Cast("unsigned int") int instance_id, @Cast("bool") boolean force_disable_all_instances);
+
+    /**
+    \brief Generate a UUID like unique ID to help identify and track AI detections
+    @param uuid : Unique ID generated.
+    @return : Size of the unique ID generated.
+     */
+    public static native int sl_generate_unique_id(@Cast("char*") BytePointer uuid);
+    public static native int sl_generate_unique_id(@Cast("char*") ByteBuffer uuid);
+    public static native int sl_generate_unique_id(@Cast("char*") byte[] uuid);
+
+    /**
+    \brief Feed the 3D Object tracking function with your own 2D bounding boxes from your own detection algorithm.
+    @param camera_id : id of the camera instance.
+    @param objects_in : 2D detections from custom detection algorithm.
+    @param nb_objects : number of custom objects (size of the object_in array).
+    \note The detection should be done on the current grabbed left image as the internal process will use all current available data to extract 3D informations and perform object tracking.
+    @return \ref SUCCESS if everything went fine, \ref ERROR_CODE::FAILURE otherwise
    */
-	public static native int sl_ingest_custom_box_objects(int camera_id, int nb_objects, SL_CustomBoxObjectData objects_in);
+    public static native int sl_ingest_custom_box_objects(int camera_id, int nb_objects, SL_CustomBoxObjectData objects_in);
 
     /**
     \brief Retrieve objects detected by the object detection module.
@@ -2059,7 +2429,17 @@ public static final int
     @param object_detection_runtime_parameters : Object detection runtime settings, can be changed at each detection. In async mode, the parameters update is applied on the next iteration.
     @return \ref SUCCESS if everything went fine, \ref ERROR_CODE::FAILURE otherwise
      */
-    public static native int sl_retrieve_objects(int camera_id, SL_ObjectDetectionRuntimeParameters object_detection_runtime_parameters, SL_Objects objects);
+    public static native int sl_retrieve_objects(int camera_id, SL_ObjectDetectionRuntimeParameters object_detection_runtime_parameters, SL_Objects objects, @Cast("unsigned int") int instance_id);
+
+    /**
+    \brief Retrieve objects detected by the object detection module.
+    @param camera_id : id of the camera instance.
+    @param bodies : The detected bodies will be saved into this object. If the object already contains data from a previous detection, it will be updated, keeping a unique ID for the same person.
+    @param body_tracking_runtime_parameters : Body Tracking runtime settings, can be changed at each detection. In async mode, the parameters update is applied on the next iteration.
+    @return \ref SUCCESS if everything went fine, \ref ERROR_CODE::FAILURE otherwise
+     */
+    public static native int sl_retrieve_bodies(int camera_id, SL_BodyTrackingRuntimeParameters body_tracking_runtime_parameters, SL_Bodies bodies, @Cast("unsigned int") int instance_id);
+
 
     /**
     \brief Updates the internal batch of detected objects.
@@ -2074,74 +2454,216 @@ public static final int
     /**
     \brief Gets a batch of detected objects. Need to be called after update_objects_batch().
     @param camera_id : id of the camera instance.
-    @param index : index of the batch to retrieve ([0, nb_batches]).
-    @param nb_data : number of detected objects in the batch.
-    @param id : The trajectory ID.
-    @param label : Object Category. Identify the object type (SL_OBJECT_CLASS).
-    @param sublabel : Object subclass (SL_OBJECT_SUBCLASS).
-    @param tracking_state : defines the object tracking state (SL_OBJECT_TRACKING_STATE).
-    @param positions : a sample of 3D positions.
-    @param position_covariances : a sample of the associated position covariances.
-    @param velocities : a sample of 3D velocity.
-    @param timestamps : The associated position timestamp.
-    @param bounding_boxes_2d : 2D bounding box of the person represented as four 2D points starting at the top left corner and rotation clockwise.
-     Expressed in pixels on the original image resolution, [0,0] is the top left corner.
-                     A ------ B
-                     | Object |
-                     D ------ C
-    @param bounding_box : a sample of 3d bounding boxes.
-    @param confidences : a sample of object detection confidence.
-    @param action_states : a sample of object action state (SL_OBJECT_ACTION_STATE).
-    @param keypoints_2d : a sample of 2d position keypoints.
-    Not available with DETECTION_MODE::MULTI_CLASS_BOX.
-    @param keypoints : a sample of 3d position keypoints.
-    Not available with DETECTION_MODE::MULTI_CLASS_BOX.
-    @param head_bounding_boxes_2d : bounds the head with four 2D points.
-    Not available with DETECTION_MODE::MULTI_CLASS_BOX.
-    @param head_bounding_boxes :  bounds the head with eight 3D points.
-    Not available with DETECTION_MODE::MULTI_CLASS_BOX.
-    @param head_positions : 3D head centroids.
-    @param keypoint_confidences : Per keypoint detection confidence, can not be lower than the \ref ObjectDetectionRuntimeParameters::detection_confidence_threshold.
-    Not available with DETECTION_MODEL::MULTI_CLASS_BOX.
+    @param objs_batch : Structure containing  all the specific data of the object batch module
     @return \ref SUCCESS if everything went fine, \ref ERROR_CODE::FAILURE otherwise
      */
-	public static native int sl_get_objects_batch(int camera_id, int index, SL_ObjectsBatch objs_batch);
-
+    public static native int sl_get_objects_batch(int camera_id, int index, SL_ObjectsBatch objs_batch);
 
     public static native int sl_get_objects_batch_csharp(int camera_id, int index, IntPointer nb_data, IntPointer id, IntPointer label, IntPointer sublabel, IntPointer tracking_state,
-    		SL_Vector3 positions, @Cast("float(*)[6]") FloatPointer position_covariances, SL_Vector3 velocities, @Cast("unsigned long long*") LongPointer timestamps,
-    		@Cast("SL_Vector2(*)[4]") SL_Vector2 bounding_boxes_2d, @Cast("SL_Vector3(*)[8]") SL_Vector3 bounding_boxes, FloatPointer confidences, IntPointer action_states,
-    		@Cast("SL_Vector2(*)[18]") SL_Vector2 keypoints_2d, @Cast("SL_Vector3(*)[18]") SL_Vector3 keypoints, @Cast("SL_Vector2(*)[4]") SL_Vector2 head_bounding_boxes_2d, @Cast("SL_Vector3(*)[8]") SL_Vector3 head_bounding_boxes,
-    		SL_Vector3 head_positions, @Cast("float(*)[18]") FloatPointer keypoints_confidences);
+            SL_Vector3 positions, @Cast("float(*)[6]") FloatPointer position_covariances, SL_Vector3 velocities, @Cast("unsigned long long*") LongPointer timestamps,
+            @Cast("SL_Vector2(*)[4]") SL_Vector2 bounding_boxes_2d, @Cast("SL_Vector3(*)[8]") SL_Vector3 bounding_boxes, FloatPointer confidences, IntPointer action_states,
+            @Cast("SL_Vector2(*)[4]") SL_Vector2 head_bounding_boxes_2d, @Cast("SL_Vector3(*)[8]") SL_Vector3 head_bounding_boxes,
+            SL_Vector3 head_positions);
     public static native int sl_get_objects_batch_csharp(int camera_id, int index, IntBuffer nb_data, IntBuffer id, IntBuffer label, IntBuffer sublabel, IntBuffer tracking_state,
-    		SL_Vector3 positions, @Cast("float(*)[6]") FloatBuffer position_covariances, SL_Vector3 velocities, @Cast("unsigned long long*") LongBuffer timestamps,
-    		@Cast("SL_Vector2(*)[4]") SL_Vector2 bounding_boxes_2d, @Cast("SL_Vector3(*)[8]") SL_Vector3 bounding_boxes, FloatBuffer confidences, IntBuffer action_states,
-    		@Cast("SL_Vector2(*)[18]") SL_Vector2 keypoints_2d, @Cast("SL_Vector3(*)[18]") SL_Vector3 keypoints, @Cast("SL_Vector2(*)[4]") SL_Vector2 head_bounding_boxes_2d, @Cast("SL_Vector3(*)[8]") SL_Vector3 head_bounding_boxes,
-    		SL_Vector3 head_positions, @Cast("float(*)[18]") FloatBuffer keypoints_confidences);
+            SL_Vector3 positions, @Cast("float(*)[6]") FloatBuffer position_covariances, SL_Vector3 velocities, @Cast("unsigned long long*") LongBuffer timestamps,
+            @Cast("SL_Vector2(*)[4]") SL_Vector2 bounding_boxes_2d, @Cast("SL_Vector3(*)[8]") SL_Vector3 bounding_boxes, FloatBuffer confidences, IntBuffer action_states,
+            @Cast("SL_Vector2(*)[4]") SL_Vector2 head_bounding_boxes_2d, @Cast("SL_Vector3(*)[8]") SL_Vector3 head_bounding_boxes,
+            SL_Vector3 head_positions);
     public static native int sl_get_objects_batch_csharp(int camera_id, int index, int[] nb_data, int[] id, int[] label, int[] sublabel, int[] tracking_state,
-    		SL_Vector3 positions, @Cast("float(*)[6]") float[] position_covariances, SL_Vector3 velocities, @Cast("unsigned long long*") long[] timestamps,
-    		@Cast("SL_Vector2(*)[4]") SL_Vector2 bounding_boxes_2d, @Cast("SL_Vector3(*)[8]") SL_Vector3 bounding_boxes, float[] confidences, int[] action_states,
-    		@Cast("SL_Vector2(*)[18]") SL_Vector2 keypoints_2d, @Cast("SL_Vector3(*)[18]") SL_Vector3 keypoints, @Cast("SL_Vector2(*)[4]") SL_Vector2 head_bounding_boxes_2d, @Cast("SL_Vector3(*)[8]") SL_Vector3 head_bounding_boxes,
-    		SL_Vector3 head_positions, @Cast("float(*)[18]") float[] keypoints_confidences);
+            SL_Vector3 positions, @Cast("float(*)[6]") float[] position_covariances, SL_Vector3 velocities, @Cast("unsigned long long*") long[] timestamps,
+            @Cast("SL_Vector2(*)[4]") SL_Vector2 bounding_boxes_2d, @Cast("SL_Vector3(*)[8]") SL_Vector3 bounding_boxes, float[] confidences, int[] action_states,
+            @Cast("SL_Vector2(*)[4]") SL_Vector2 head_bounding_boxes_2d, @Cast("SL_Vector3(*)[8]") SL_Vector3 head_bounding_boxes,
+            SL_Vector3 head_positions);
+
+// #if 0
+
+
+// #endif
 // #endif
 // #ifdef __cplusplus
 // #endif
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////// MULTI CAMERA API //////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // #ifdef __cplusplus
 // #endif
+    
+    /** \brief FusionHandler initialisation. Initializes memory/generic datas
+    * @param params [in] : structure containing all init parameters for the fusion API
+    * @return SL_FUSION_ERROR_CODE
+    */
+    public static native @Cast("SL_FUSION_ERROR_CODE") int sl_fusion_init(SL_InitFusionParameters params);
+    
+    /** \brief process the fusion.
+    * @return SL_FUSION_ERROR_CODE
+    */
+    public static native @Cast("SL_FUSION_ERROR_CODE") int sl_fusion_process();
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////// Mat ///////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /*
+    * \brief adds a camera to the multi camera handler
+    * \param [in] uuid : unique ID that is associated with the camera for easy access.
+    * \param [in] params : communications parameters
+    * \param [in] pose_translation : position of the camera
+    * \param [in] pose_rotation : orientation of the camera
+    * \return SL_FUSION_ERROR_CODE
+    * */
+    public static native @Cast("SL_FUSION_ERROR_CODE") int sl_fusion_subscribe(SL_CameraIdentifier uuid, SL_CommunicationParameters params, SL_Vector3 pose_translation, SL_Quaternion pose_rotation);
+
+
+    /*
+    * \brief update the pose of the camera in the fusion coordinate space
+    * \param [in] uuid : unique ID that is associated with the camera for easy access.
+    * \param [in] pose_translation : new position of the camera
+    * \param [in] pose_rotation : new orientation of the camera
+    * \return SL_FUSION_ERROR_CODE
+    * */
+    public static native @Cast("SL_FUSION_ERROR_CODE") int sl_fusion_update_pose(SL_CameraIdentifier uuid, SL_Vector3 pose_translation, SL_Quaternion pose_rotation);
+    
+    /*
+    * \brief update the pose of the camera in the fusion coordinate space
+    * \param [in] uuid : unique ID that is associated with the camera for easy access.
+    * \param [in] pose_translation : new position of the camera
+    * \param [in] pose_rotation : new orientation of the camera
+    * \return SL_FUSION_ERROR_CODE
+    * */
+    public static native @Cast("SL_SENDER_ERROR_CODE") int sl_fusion_get_sender_state(SL_CameraIdentifier uuid);
+
+    public static native void sl_fusion_read_configuration_file(@Cast("char*") BytePointer json_config_filename, @Cast("SL_COORDINATE_SYSTEM") int coord_system, @Cast("SL_UNIT") int unit, SL_FusionConfiguration configs, IntPointer nb_cameras);
+    public static native void sl_fusion_read_configuration_file(@Cast("char*") ByteBuffer json_config_filename, @Cast("SL_COORDINATE_SYSTEM") int coord_system, @Cast("SL_UNIT") int unit, SL_FusionConfiguration configs, IntBuffer nb_cameras);
+    public static native void sl_fusion_read_configuration_file(@Cast("char*") byte[] json_config_filename, @Cast("SL_COORDINATE_SYSTEM") int coord_system, @Cast("SL_UNIT") int unit, SL_FusionConfiguration configs, int[] nb_cameras);
+
+    /////////////////////////////////////////////////////////////////////
+    ///////////////////// Object Detection Fusion ///////////////////////
+    /////////////////////////////////////////////////////////////////////
+
+    /** \brief enables Object detection fusion module
+    * @param parameters [in] defined by \ref sl::ObjectDetectionFusionParameters
+    * @return SL_FUSION_ERROR_CODE
+    */
+    public static native @Cast("SL_FUSION_ERROR_CODE") int sl_fusion_enable_body_tracking(SL_BodyTrackingFusionParameters params);
+
+	/**
+	\brief Disable the object detection module.
+	 */
+	public static native void sl_fusion_disable_body_tracking();
 
     /**
-    \brief Creates a Mat with the given resolution.
-    @param width : width of the new mat.
-    @param height : height of the new mat.
-    @param type : Data type and number of channels the Mat will hold (see \ref SL_MAT_TYPE).
-    @param mem : Whether Mat should exist on CPU or GPU memory (SL_MEM).
-    @return Ptr of the Mat.
+    * \brief retrieves a list of bodies (in SL_Bodies class type) seen by all cameras and merged as if it was seen by a single super-camera.
+    *\note Internal calls retrieveObjects() for all listed cameras, then merged into a single SL_Bodies
+    * @param bodies [out] : list of objects seen by all available cameras
+    * \note Only the 3d informations is available in the returned object.
+    * @return SL_FUSION_ERROR_CODE
+    */
+    public static native @Cast("SL_FUSION_ERROR_CODE") int sl_fusion_retrieve_bodies(SL_Bodies bodies, SL_BodyTrackingFusionRuntimeParameters rt, @ByVal SL_CameraIdentifier uuid);
+
+    /**
+     * \brief get the stats of a given camera in the Fusion API side
+     * It can be the received FPS, drop frame, latency, etc
+     * @param metrics : structure containing all the metrics available
+     * @return SL_FUSION_ERROR_CODE
      */
+    public static native @Cast("SL_FUSION_ERROR_CODE") int sl_fusion_get_process_metrics(SL_FusionMetrics metrics);
+
+
+    /////////////////////////////////////////////////////////////////////
+    ///////////////////// Positional tracking  //////////////////////////
+    /////////////////////////////////////////////////////////////////////
+
+    /**
+    * \brief enable positional tracking fusion.
+    * \note note that for the alpha version of the API, the positional tracking fusion doesn't support the area memory feature
+    *
+    * @return SL_FUSION_ERROR_CODE
+    */
+    public static native @Cast("SL_FUSION_ERROR_CODE") int sl_fusion_enable_positional_tracking(SL_PositionalTrackingFusionParameters params);
+
+    /**
+     * \brief Get the Fused Position of the camera system
+     *
+     * @param camera_pose will contain the camera pose in world position (world position is given by the calibration of the cameras system)
+     * @param reference_frame defines the reference from which you want the pose to be expressed. Default : \ref REFERENCE_FRAME "REFERENCE_FRAME::WORLD".
+     * @param uuid Camera identifier
+     * @return POSITIONAL_TRACKING_STATE is the current state of the tracking process
+     */
+    public static native @Cast("SL_POSITIONAL_TRACKING_STATE") int sl_fusion_get_position(SL_PoseData pose, @Cast("SL_REFERENCE_FRAME") int reference_frame, @Cast("SL_COORDINATE_SYSTEM") int coordinate_system, @Cast("SL_UNIT") int unit,
+                                                               SL_CameraIdentifier uuid, @Cast("SL_POSITION_TYPE") int retrieve_type);
+
+    /**
+     * \brief disable the positional tracking
+     */
+    public static native void sl_fusion_disable_positional_tracking();
+
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////// GNSS Fusion /////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+
+    /**
+     * \brief Add GNSS that will be used by fusion for computing fused pose.
+     * @param out [in]: the current GNSS data
+     * @param radian [in] : true if the gnssdata is set in radian
+     */
+    public static native @Cast("SL_FUSION_ERROR_CODE") int sl_fusion_ingest_gnss_data(SL_GNSSData gnss_data, @Cast("bool") boolean radian);
+
+    /**
+     * \brief returns the current GNSS data
+     * @param out [out]: the current GNSS data
+     * @param radian [in] : true if the gnss data is set in radian
+     * @return POSITIONAL_TRACKING_STATE is the current state of the tracking process
+     */
+    public static native @Cast("SL_POSITIONAL_TRACKING_STATE") int sl_fusion_get_current_gnss_data(SL_GNSSData data, @Cast("bool") boolean radian);
+
+    /**
+     * \brief returns the current GeoPose
+     * @param pose [out]: the current GeoPose
+     * @param radian [in] : true if the geopose is set in radian.
+     * @return POSITIONAL_TRACKING_STATE is the current state of the tracking process
+     */
+    public static native @Cast("SL_POSITIONAL_TRACKING_STATE") int sl_fusion_get_geo_pose(SL_GeoPose pose, @Cast("bool") boolean radian);
+
+    /**
+     * \brief Convert latitude / longitude into position in sl::Fusion coordinate system.
+     * @param in: the current GeoPose
+     * @param out [out]: the current Pose
+     * @param radian [in] : true if the geopose is set in radian.
+     * @return POSITIONAL_TRACKING_STATE is the current state of the tracking process
+     */
+    public static native @Cast("SL_POSITIONAL_TRACKING_STATE") int sl_fusion_geo_to_camera(SL_LatLng in, SL_PoseData out, @Cast("bool") boolean radian);
+
+    /**
+     * \brief returns the current GeoPose
+     * @param pose [out]: the current GeoPose
+     * @param radian [in] : true if the geopose is set in radian.
+     * @return POSITIONAL_TRACKING_STATE is the current state of the tracking process
+     */
+    public static native @Cast("SL_POSITIONAL_TRACKING_STATE") int sl_fusion_camera_to_geo(SL_PoseData in, SL_GeoPose out, @Cast("bool") boolean radian);
+
+	/**
+	\brief Close Multi Camera instance.
+	 */
+	public static native void sl_fusion_close();
+
+// #ifdef __cplusplus
+// #endif
+
+
+
+// #ifdef __cplusplus
+// #endif
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////// Mat ///////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   /**
+   \brief Creates a Mat with the given resolution.
+   @param width : width of the new mat.
+   @param height : height of the new mat.
+   @param type : Data type and number of channels the Mat will hold (see \ref SL_MAT_TYPE).
+   @param mem : Whether Mat should exist on CPU or GPU memory (SL_MEM).
+   @return Ptr of the Mat.
+    */
     public static native Pointer sl_mat_create_new(int width, int height, @Cast("SL_MAT_TYPE") int type, @Cast("SL_MEM") int mem);
     /**
     \brief Creates an empty Mat with the given resolution.
@@ -2404,7 +2926,7 @@ public static final int
     @return ERROR_CODE::SUCCESS if everything went well, ERROR_CODE::FAILURE otherwise.
      */
     public static native int sl_mat_set_to_float4(Pointer ptr, @ByVal SL_Vector4 value, @Cast("SL_MEM") int mem);
-	
+
     /**
     \brief Copies data from the GPU to the CPU, if possible.
     @param ptr : Ptr to the Mat.

@@ -30,8 +30,8 @@ public class SL_Uchar4 extends Pointer {
         return new SL_Uchar4((Pointer)this).offsetAddress(i);
     }
 
-    public native @Cast("unsigned char") byte x(); public native SL_Uchar4 x(byte setter);
-    public native @Cast("unsigned char") byte y(); public native SL_Uchar4 y(byte setter);
-    public native @Cast("unsigned char") byte z(); public native SL_Uchar4 z(byte setter);
-    public native @Cast("unsigned char") byte w(); public native SL_Uchar4 w(byte setter);
+	public native @Cast("unsigned char") byte x(); public native SL_Uchar4 x(byte setter);
+	public native @Cast("unsigned char") byte y(); public native SL_Uchar4 y(byte setter);
+	public native @Cast("unsigned char") byte z(); public native SL_Uchar4 z(byte setter);
+	public native @Cast("unsigned char") byte w(); public native SL_Uchar4 w(byte setter);
 }

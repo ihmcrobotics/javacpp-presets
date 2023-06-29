@@ -9,6 +9,10 @@ import org.bytedeco.javacpp.annotation.*;
 import static org.bytedeco.zed.global.zed.*;
 
 
+// #if 0
+
+// #endif
+
 /*
 Defines a 2D rectangle with top-left corner coordinates and width/height in pixels.
 */

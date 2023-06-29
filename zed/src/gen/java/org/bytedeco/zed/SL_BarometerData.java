@@ -30,8 +30,8 @@ public class SL_BarometerData extends Pointer {
         return new SL_BarometerData((Pointer)this).offsetAddress(i);
     }
 
-    public native @Cast("bool") boolean is_available(); public native SL_BarometerData is_available(boolean setter);
-    public native @Cast("unsigned long long") long timestamp_ns(); public native SL_BarometerData timestamp_ns(long setter);
-    public native float pressure(); public native SL_BarometerData pressure(float setter);
-    public native float relative_altitude(); public native SL_BarometerData relative_altitude(float setter);
+	public native @Cast("bool") boolean is_available(); public native SL_BarometerData is_available(boolean setter);
+	public native @Cast("unsigned long long") long timestamp_ns(); public native SL_BarometerData timestamp_ns(long setter);
+	public native float pressure(); public native SL_BarometerData pressure(float setter);
+	public native float relative_altitude(); public native SL_BarometerData relative_altitude(float setter);
 }

@@ -186,4 +186,12 @@ public class SL_InitParameters extends Pointer {
 	\n This parameter only impacts the LIVE mode.
 	 */
 	public native float open_timeout_sec(); public native SL_InitParameters open_timeout_sec(float setter);
+
+	/**
+	 Define the behavior of the automatic camera recovery during grab() function call. When async is enabled and there's an issue with the communication with the camera
+	 the grab() will exit after a short period and return the ERROR_CODE::CAMERA_REBOOTING warning. The recovery will run in the background until the correct communication is restored.
+	 When async_grab_camera_recovery is false, the grab() function is blocking and will return only once the camera communication is restored or the timeout is reached.
+	 The default behavior is synchronous, like previous ZED SDK versions
+	 */
+	public native @Cast("bool") boolean async_grab_camera_recovery(); public native SL_InitParameters async_grab_camera_recovery(boolean setter);
 }

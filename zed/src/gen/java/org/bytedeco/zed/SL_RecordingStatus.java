@@ -30,23 +30,23 @@ public class SL_RecordingStatus extends Pointer {
         return new SL_RecordingStatus((Pointer)this).offsetAddress(i);
     }
 
-	 
+	
 	/** Recorder status, true if the pause is enabled */
 	public native @Cast("bool") boolean is_recording(); public native SL_RecordingStatus is_recording(boolean setter);
-	 
+	
 	/** Status of current frame. True for success or false if the frame couldn't be written in the SVO file.*/
 	public native @Cast("bool") boolean is_paused(); public native SL_RecordingStatus is_paused(boolean setter);
-	 
+	
 	/** Compression time for the current frame in ms.*/
 	public native @Cast("bool") boolean status(); public native SL_RecordingStatus status(boolean setter);
-	 
+	
 	/** Compression ratio (% of raw size) for the current frame.*/
 	public native double current_compression_time(); public native SL_RecordingStatus current_compression_time(double setter);
-	 
+	
 	/** Average compression time in ms since beginning of recording.*/
 	public native double current_compression_ratio(); public native SL_RecordingStatus current_compression_ratio(double setter);
 	
 	/** Average compression ratio (% of raw size) since beginning of recording.*/
 	public native double average_compression_time(); public native SL_RecordingStatus average_compression_time(double setter);
-	public native double average_compression_ratio(); public native SL_RecordingStatus average_compression_ratio(double setter); 
+	public native double average_compression_ratio(); public native SL_RecordingStatus average_compression_ratio(double setter);
 }

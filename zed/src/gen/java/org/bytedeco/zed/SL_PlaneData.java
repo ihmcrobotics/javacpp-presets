@@ -27,15 +27,15 @@ public class SL_PlaneData extends Pointer {
         return new SL_PlaneData((Pointer)this).offsetAddress(i);
     }
 
-    public native int error_code(); public native SL_PlaneData error_code(int setter);
-    public native @Cast("UNITY_PLAN_TYPE") int type(); public native SL_PlaneData type(int setter);
-    public native @ByRef SL_Vector3 plane_normal(); public native SL_PlaneData plane_normal(SL_Vector3 setter);
-    public native @ByRef SL_Vector3 plane_center(); public native SL_PlaneData plane_center(SL_Vector3 setter);
-    public native @ByRef SL_Vector3 plane_transform_position(); public native SL_PlaneData plane_transform_position(SL_Vector3 setter);
-    public native @ByRef SL_Quaternion plane_transform_orientation(); public native SL_PlaneData plane_transform_orientation(SL_Quaternion setter);
-    public native @ByRef SL_Vector4 plane_equation(); public native SL_PlaneData plane_equation(SL_Vector4 setter);
-    public native @ByRef SL_Vector2 extents(); public native SL_PlaneData extents(SL_Vector2 setter);
-    public native int bounds_size(); public native SL_PlaneData bounds_size(int setter);
-    public native @ByRef SL_Vector3 bounds(int i); public native SL_PlaneData bounds(int i, SL_Vector3 setter);
-    @MemberGetter public native SL_Vector3 bounds(); //max 256 points but only BoundsSize are actually filled
+	public native int error_code(); public native SL_PlaneData error_code(int setter);
+	public native @Cast("UNITY_PLAN_TYPE") int type(); public native SL_PlaneData type(int setter);
+	public native @ByRef SL_Vector3 plane_normal(); public native SL_PlaneData plane_normal(SL_Vector3 setter);
+	public native @ByRef SL_Vector3 plane_center(); public native SL_PlaneData plane_center(SL_Vector3 setter);
+	public native @ByRef SL_Vector3 plane_transform_position(); public native SL_PlaneData plane_transform_position(SL_Vector3 setter);
+	public native @ByRef SL_Quaternion plane_transform_orientation(); public native SL_PlaneData plane_transform_orientation(SL_Quaternion setter);
+	public native @ByRef SL_Vector4 plane_equation(); public native SL_PlaneData plane_equation(SL_Vector4 setter);
+	public native @ByRef SL_Vector2 extents(); public native SL_PlaneData extents(SL_Vector2 setter);
+	public native int bounds_size(); public native SL_PlaneData bounds_size(int setter);
+	public native @ByRef SL_Vector3 bounds(int i); public native SL_PlaneData bounds(int i, SL_Vector3 setter);
+	@MemberGetter public native SL_Vector3 bounds(); //max 256 points but only BoundsSize are actually filled
 }

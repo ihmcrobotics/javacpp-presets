@@ -9,7 +9,7 @@ fi
 
 # Requires libusb-dev, CUDA
 
-ZED_C_VERSION=3.8
+ZED_C_VERSION=4.0.4
 download https://github.com/stereolabs/zed-c-api/archive/refs/tags/v$ZED_C_VERSION.tar.gz zed-c-api-$ZED_C_VERSION.tar.gz
 mkdir -p $PLATFORM
 cd $PLATFORM

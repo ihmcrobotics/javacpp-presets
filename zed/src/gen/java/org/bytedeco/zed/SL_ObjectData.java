@@ -62,6 +62,11 @@ public class SL_ObjectData extends Pointer {
 	 */
 	public native @Cast("SL_OBJECT_ACTION_STATE") int action_state(); public native SL_ObjectData action_state(int setter);
 	/**
+	\brief Defines the object 3D centroid.
+	 * Defined in \ref sl:InitParameters::UNIT, expressed in \ref RuntimeParameters::measure3D_reference_frame.
+	 */
+	public native @ByRef @Name("position") SL_Vector3 _position(); public native SL_ObjectData _position(SL_Vector3 setter);
+	/**
 	\brief Defines the detection confidence value of the object.
 	 * From 0 to 100, a low value means the object might not be localized perfectly or the label (OBJECT_CLASS) is uncertain.
 	 */
@@ -74,11 +79,6 @@ public class SL_ObjectData extends Pointer {
 	//Image
 	public native @ByRef SL_Vector2 bounding_box_2d(int i); public native SL_ObjectData bounding_box_2d(int i, SL_Vector2 setter);
 	@MemberGetter public native SL_Vector2 bounding_box_2d();
-	/**
-	\brief Defines the object 3D centroid.
-	 * Defined in \ref sl:InitParameters::UNIT, expressed in \ref RuntimeParameters::measure3D_reference_frame.
-	 */
-	public native @ByRef @Name("position") SL_Vector3 _position(); public native SL_ObjectData _position(SL_Vector3 setter);
 	/**
 	 * \brief 3D head centroid.
 	 * Defined in \ref sl:InitParameters::UNIT, expressed in \ref RuntimeParameters::measure3D_reference_frame.
@@ -117,23 +117,12 @@ public class SL_ObjectData extends Pointer {
 	public native @ByRef SL_Vector3 head_bounding_box(int i); public native SL_ObjectData head_bounding_box(int i, SL_Vector3 setter);
 	@MemberGetter public native SL_Vector3 head_bounding_box();
 	/**
-	 * \brief A set of useful points representing the human body, expressed in 2D, respect to the original image resolution.
-	 * We use a classic 18 points representation, the points semantic and order is given by BODY_PARTS.
-	 * Expressed in pixels on the original image resolution, [0,0] is the top left corner.
+	 * \brief bounds the head with four 2D points.
+	 * Expressed in pixels on the original image resolution.
 	  \note Not available with DETECTION_MODEL::MULTI_CLASS_BOX.
-	  \warning in some cases, eg. body partially out of the image, some keypoint can not be detected, they will have negatives coordinates.
 	 */
-	public native @ByRef SL_Vector2 keypoint_2d(int i); public native SL_ObjectData keypoint_2d(int i, SL_Vector2 setter);
-	@MemberGetter public native SL_Vector2 keypoint_2d();
-	/**
-	 * \brief A set of useful points representing the human body, expressed in 3D.
-	 * We use a classic 18 points representation, the points semantic and order is given by BODY_PARTS.
-	 * Defined in \ref sl:InitParameters::UNIT, expressed in \ref RuntimeParameters::measure3D_reference_frame.
-	  \note Not available with DETECTION_MODEL::MULTI_CLASS_BOX.
-	  \warning in some cases, eg. body partially out of the image or missing depth data, some keypoint can not be detected, they will have non finite values.
-	 */
-	public native @ByRef SL_Vector3 keypoint(int i); public native SL_ObjectData keypoint(int i, SL_Vector3 setter);
-	@MemberGetter public native SL_Vector3 keypoint();
+	public native @ByRef SL_Vector2 head_bounding_box_2d(int i); public native SL_ObjectData head_bounding_box_2d(int i, SL_Vector2 setter);
+	@MemberGetter public native SL_Vector2 head_bounding_box_2d();
 	/**
 	\brief the covariance matrix of the 3d position, represented by its upper triangular matrix value
 	 * <pre>{@code
@@ -145,29 +134,4 @@ public class SL_ObjectData extends Pointer {
 	 */
 	public native float position_covariance(int i); public native SL_ObjectData position_covariance(int i, float setter);
 	@MemberGetter public native FloatPointer position_covariance();
-	/**
-	 * \brief Per keypoint detection confidence, can not be lower than the \ref ObjectDetectionRuntimeParameters::detection_confidence_threshold.
-	  \note Not available with DETECTION_MODEL::MULTI_CLASS_BOX.
-	  \warning in some cases, eg. body partially out of the image or missing depth data, some keypoint can not be detected, they will have non finite values.
-	 */
-	public native float keypoint_confidence(int i); public native SL_ObjectData keypoint_confidence(int i, float setter);
-	@MemberGetter public native FloatPointer keypoint_confidence();
-	/**
-	\brief Per keypoint local position (the position of the child keypoint with respect to its parent expressed in its parent coordinate frame)
-	\note it is expressed in sl::REFERENCE_CAMERA or sl::REFERENCE_WORLD
-	Not available with DETECTION_MODEL::MULTI_CLASS_BOX.
-	*/
-	public native @ByRef SL_Vector3 local_position_per_joint(int i); public native SL_ObjectData local_position_per_joint(int i, SL_Vector3 setter);
-	@MemberGetter public native SL_Vector3 local_position_per_joint();
-	/**
-		\brief Per keypoint local orientation
-		\note the orientation is represented by a quaternion which is stored in sl::float4 (sl::float4 q = sl::float4(qx,qy,qz,qw);)
-		Not available with DETECTION_MODEL::MULTI_CLASS_BOX.
-	*/
-	public native @ByRef SL_Quaternion local_orientation_per_joint(int i); public native SL_ObjectData local_orientation_per_joint(int i, SL_Quaternion setter);
-	@MemberGetter public native SL_Quaternion local_orientation_per_joint();
-	/**
-		\brief global root orientation of the skeleton. The orientation is also represented by a quaternion with the same format as \ref local_orientation_per_joint
-	*/
-	public native @ByRef SL_Quaternion global_root_orientation(); public native SL_ObjectData global_root_orientation(SL_Quaternion setter);
 }

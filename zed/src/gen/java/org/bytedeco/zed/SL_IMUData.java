@@ -30,14 +30,14 @@ public class SL_IMUData extends Pointer {
         return new SL_IMUData((Pointer)this).offsetAddress(i);
     }
 
-    public native @Cast("bool") boolean is_available(); public native SL_IMUData is_available(boolean setter);
-    public native @Cast("unsigned long long") long timestamp_ns(); public native SL_IMUData timestamp_ns(long setter);
-    public native @ByRef SL_Vector3 angular_velocity(); public native SL_IMUData angular_velocity(SL_Vector3 setter);
-    public native @ByRef SL_Vector3 linear_acceleration(); public native SL_IMUData linear_acceleration(SL_Vector3 setter);
-    public native @ByRef SL_Vector3 angular_velocity_unc(); public native SL_IMUData angular_velocity_unc(SL_Vector3 setter); //uncalibrated
-    public native @ByRef SL_Vector3 linear_acceleration_unc(); public native SL_IMUData linear_acceleration_unc(SL_Vector3 setter); //uncalibrated
-    public native @ByRef SL_Quaternion orientation(); public native SL_IMUData orientation(SL_Quaternion setter);
-    public native @ByRef SL_Matrix3f orientation_covariance(); public native SL_IMUData orientation_covariance(SL_Matrix3f setter);
-    public native @ByRef SL_Matrix3f angular_velocity_convariance(); public native SL_IMUData angular_velocity_convariance(SL_Matrix3f setter);
-    public native @ByRef SL_Matrix3f linear_acceleration_convariance(); public native SL_IMUData linear_acceleration_convariance(SL_Matrix3f setter);
+	public native @Cast("bool") boolean is_available(); public native SL_IMUData is_available(boolean setter);
+	public native @Cast("unsigned long long") long timestamp_ns(); public native SL_IMUData timestamp_ns(long setter);
+	public native @ByRef SL_Vector3 angular_velocity(); public native SL_IMUData angular_velocity(SL_Vector3 setter);
+	public native @ByRef SL_Vector3 linear_acceleration(); public native SL_IMUData linear_acceleration(SL_Vector3 setter);
+	public native @ByRef SL_Vector3 angular_velocity_unc(); public native SL_IMUData angular_velocity_unc(SL_Vector3 setter); //uncalibrated
+	public native @ByRef SL_Vector3 linear_acceleration_unc(); public native SL_IMUData linear_acceleration_unc(SL_Vector3 setter); //uncalibrated
+	public native @ByRef SL_Quaternion orientation(); public native SL_IMUData orientation(SL_Quaternion setter);
+	public native @ByRef SL_Matrix3f orientation_covariance(); public native SL_IMUData orientation_covariance(SL_Matrix3f setter);
+	public native @ByRef SL_Matrix3f angular_velocity_convariance(); public native SL_IMUData angular_velocity_convariance(SL_Matrix3f setter);
+	public native @ByRef SL_Matrix3f linear_acceleration_convariance(); public native SL_IMUData linear_acceleration_convariance(SL_Matrix3f setter);
 }

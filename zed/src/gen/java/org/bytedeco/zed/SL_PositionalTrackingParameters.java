@@ -43,7 +43,7 @@ public class SL_PositionalTrackingParameters extends Pointer {
 	This mode enables the camera to remember its surroundings. This helps correct positional tracking drift, and can be helpful for positioning
 	different cameras relative to one other in space.
 	\n default: true
-	\warning: This mode requires more resources to run, but greatly improves tracking accuracy. We recommend leaving it on by default.
+d	\warning: This mode requires more resources to run, but greatly improves tracking accuracy. We recommend leaving it on by default.
 		*/
 	public native @Cast("bool") boolean enable_area_memory(); public native SL_PositionalTrackingParameters enable_area_memory(boolean setter);
 	/**
@@ -82,4 +82,10 @@ public class SL_PositionalTrackingParameters extends Pointer {
 	 * \brief This setting allows you to override 2 of the 3 rotations from initial_world_transform using the IMU gravity
 	 */
 	public native @Cast("bool") boolean set_gravity_as_origin(); public native SL_PositionalTrackingParameters set_gravity_as_origin(boolean setter);
+	/**
+	* \brief Positional tracking mode used. Can be used to improve accuracy in some type of scene at the cost of longer runtime
+	* default : POSITIONAL_TRACKING_MODE::STANDARD
+	*/
+	public native @Cast("SL_POSITIONAL_TRACKING_MODE") int mode(); public native SL_PositionalTrackingParameters mode(int setter);
+
 }

@@ -30,8 +30,8 @@ public class SL_TemperatureData extends Pointer {
         return new SL_TemperatureData((Pointer)this).offsetAddress(i);
     }
 
-    public native float imu_temp(); public native SL_TemperatureData imu_temp(float setter);
-    public native float barometer_temp(); public native SL_TemperatureData barometer_temp(float setter);
-    public native float onboard_left_temp(); public native SL_TemperatureData onboard_left_temp(float setter);
-    public native float onboard_right_temp(); public native SL_TemperatureData onboard_right_temp(float setter);
+	public native float imu_temp(); public native SL_TemperatureData imu_temp(float setter);
+	public native float barometer_temp(); public native SL_TemperatureData barometer_temp(float setter);
+	public native float onboard_left_temp(); public native SL_TemperatureData onboard_left_temp(float setter);
+	public native float onboard_right_temp(); public native SL_TemperatureData onboard_right_temp(float setter);
 }

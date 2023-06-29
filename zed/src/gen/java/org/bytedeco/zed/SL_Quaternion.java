@@ -30,8 +30,8 @@ public class SL_Quaternion extends Pointer {
         return new SL_Quaternion((Pointer)this).offsetAddress(i);
     }
 
-    public native float x(); public native SL_Quaternion x(float setter);
-    public native float y(); public native SL_Quaternion y(float setter);
-    public native float z(); public native SL_Quaternion z(float setter);
-    public native float w(); public native SL_Quaternion w(float setter);
+	public native float x(); public native SL_Quaternion x(float setter);
+	public native float y(); public native SL_Quaternion y(float setter);
+	public native float z(); public native SL_Quaternion z(float setter);
+	public native float w(); public native SL_Quaternion w(float setter);
 }

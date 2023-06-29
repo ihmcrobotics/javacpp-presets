@@ -47,4 +47,8 @@ public class SL_DeviceProperties extends Pointer {
 	\n Not provided for Windows
 	 */
 	public native @Cast("unsigned int") int sn(); public native SL_DeviceProperties sn(int setter);
+	/**
+	 camera input type
+	 */
+	public native @Cast("SL_INPUT_TYPE") int input_type(); public native SL_DeviceProperties input_type(int setter);
 }

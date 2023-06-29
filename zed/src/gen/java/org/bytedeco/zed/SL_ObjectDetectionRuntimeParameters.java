@@ -54,10 +54,4 @@ public class SL_ObjectDetectionRuntimeParameters extends Pointer {
 	 */
 	public native int object_confidence_threshold(int i); public native SL_ObjectDetectionRuntimeParameters object_confidence_threshold(int i, int setter);
 	@MemberGetter public native IntPointer object_confidence_threshold();
-	/**
-	\brief Defines the minimum keypoints threshold.
-	 * the SDK will outputs skeletons with more keypoints than this threshold
-	 * it is useful for example to remove unstable fitting results when a skeleton is partially occluded
-	 */
-	public native int minimum_keypoints_threshold(); public native SL_ObjectDetectionRuntimeParameters minimum_keypoints_threshold(int setter);
 }

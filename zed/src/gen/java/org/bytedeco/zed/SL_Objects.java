@@ -33,12 +33,12 @@ public class SL_Objects extends Pointer {
 	/**
 	\brief Number of detected objects. Used to iterate through the object_list array.
 	 */
-	public native int nb_object(); public native SL_Objects nb_object(int setter);
+	public native int nb_objects(); public native SL_Objects nb_objects(int setter);
 	/**
 	\brief Defines the timestamp corresponding to the frame acquisition.
 	 * This value is especially useful for the async mode to synchronize the data.
 	 */
-	public native @Cast("unsigned long long") long image_ts(); public native SL_Objects image_ts(long setter);
+	public native @Cast("unsigned long long") long timestamp(); public native SL_Objects timestamp(long setter);
 	/**
 	\brief Defined if the object list has already been retrieved or not.
 	 */
@@ -50,7 +50,7 @@ public class SL_Objects extends Pointer {
 	/**
 	\brief Detection model used (SL_DETECTION_MODEL).
 	 */
-	public native @Cast("SL_DETECTION_MODEL") int detection_model(); public native SL_Objects detection_model(int setter);
+	public native @Cast("SL_OBJECT_DETECTION_MODEL") int detection_model(); public native SL_Objects detection_model(int setter);
 	/**
 	\brief The list of detected objects
 	 */

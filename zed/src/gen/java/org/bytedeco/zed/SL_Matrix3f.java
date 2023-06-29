@@ -30,6 +30,6 @@ public class SL_Matrix3f extends Pointer {
         return new SL_Matrix3f((Pointer)this).offsetAddress(i);
     }
 
-    public native float p(int i); public native SL_Matrix3f p(int i, float setter);
-    @MemberGetter public native FloatPointer p();
+	public native float p(int i); public native SL_Matrix3f p(int i, float setter);
+	@MemberGetter public native FloatPointer p();
 }

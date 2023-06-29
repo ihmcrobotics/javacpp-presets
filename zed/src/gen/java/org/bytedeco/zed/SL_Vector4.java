@@ -30,8 +30,8 @@ public class SL_Vector4 extends Pointer {
         return new SL_Vector4((Pointer)this).offsetAddress(i);
     }
 
-    public native float x(); public native SL_Vector4 x(float setter);
-    public native float y(); public native SL_Vector4 y(float setter);
-    public native float z(); public native SL_Vector4 z(float setter);
-    public native float w(); public native SL_Vector4 w(float setter);
+	public native float x(); public native SL_Vector4 x(float setter);
+	public native float y(); public native SL_Vector4 y(float setter);
+	public native float z(); public native SL_Vector4 z(float setter);
+	public native float w(); public native SL_Vector4 w(float setter);
 }

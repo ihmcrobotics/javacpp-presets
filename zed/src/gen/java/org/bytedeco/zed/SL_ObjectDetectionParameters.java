@@ -31,6 +31,11 @@ public class SL_ObjectDetectionParameters extends Pointer {
     }
 
 	/**
+	\brief Defines a module instance id. This is used to identify which object detection model instance is used.
+	 * If the id is negative it will be auto incremented/generated
+	 */
+	public native @Cast("unsigned int") int instance_module_id(); public native SL_ObjectDetectionParameters instance_module_id(int setter);
+	/**
 	\brief Defines if the object detection is synchronized to the image or runs in a separate thread.
 	If set to true, the detection is run for every grab, otherwise, the thread runs at its own speed, which can lead to new detection once in a while.
 	*/
@@ -42,20 +47,11 @@ public class SL_ObjectDetectionParameters extends Pointer {
 	/**
 	\brief Defines if the mask object will be computed
 	 */
-	public native @Cast("bool") boolean enable_mask_output(); public native SL_ObjectDetectionParameters enable_mask_output(boolean setter);
+	public native @Cast("bool") boolean enable_segmentation(); public native SL_ObjectDetectionParameters enable_segmentation(boolean setter);
 	/**
 	\brief Enable human pose estimation with skeleton keypoints output (SL_DETECTION_MODEL).
 	 */
-	public native @Cast("SL_DETECTION_MODEL") int model(); public native SL_ObjectDetectionParameters model(int setter);
-	/**
-	\brief Defines if the body fitting will be applied
-	 */
-	public native @Cast("bool") boolean enable_body_fitting(); public native SL_ObjectDetectionParameters enable_body_fitting(boolean setter);
-	/**
-	 * \brief Defines the body format outputed by the sdk when \ref retrieveObjects is called.
-	 *
-	*/
-	public native @Cast("SL_BODY_FORMAT") int body_format(); public native SL_ObjectDetectionParameters body_format(int setter);
+	public native @Cast("SL_OBJECT_DETECTION_MODEL") int detection_model(); public native SL_ObjectDetectionParameters detection_model(int setter);
 	/**
 	\brief Defines a upper depth range for detections.
 	  * \n Defined in \ref UNIT set at \ref SL_Camera::open.
@@ -83,4 +79,13 @@ public class SL_ObjectDetectionParameters extends Pointer {
 	* defulat : 0.2f
 	*/
 	public native float prediction_timeout_s(); public native SL_ObjectDetectionParameters prediction_timeout_s(float setter);
+	/**
+	\brief Allow inference to run at a lower precision to improve runtime and memory usage,
+	 * it might increase the initial optimization time and could include downloading calibration data or calibration cache and slightly reduce the accuracy
+	 * \note The fp16 is automatically enabled if the GPU is compatible and provides a speed up of almost x2 and reduce memory usage by almost half, no precision loss.
+	 * \note This setting allow int8 precision which can speed up by another x2 factor (compared to fp16, or x4 compared to fp32) and half the fp16 memory usage, however some accuracy can be lost.
+	 * The accuracy loss should not exceed 1-2% on the compatible models.
+	 * The current compatible models are all HUMAN_BODY_XXXX
+	 */
+	public native @Cast("bool") boolean allow_reduced_precision_inference(); public native SL_ObjectDetectionParameters allow_reduced_precision_inference(boolean setter);
 }

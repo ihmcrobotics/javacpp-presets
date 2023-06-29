@@ -27,11 +27,11 @@ public class SL_PoseData extends Pointer {
         return new SL_PoseData((Pointer)this).offsetAddress(i);
     }
 
-    public native @Cast("bool") boolean valid(); public native SL_PoseData valid(boolean setter);
-    public native @Cast("unsigned long long") long timestamp(); public native SL_PoseData timestamp(long setter);
-    public native @ByRef SL_Quaternion rotation(); public native SL_PoseData rotation(SL_Quaternion setter);
-    public native @ByRef SL_Vector3 translation(); public native SL_PoseData translation(SL_Vector3 setter);
-    public native int pose_confidence(); public native SL_PoseData pose_confidence(int setter);
+	public native @Cast("bool") boolean valid(); public native SL_PoseData valid(boolean setter);
+	public native @Cast("unsigned long long") long timestamp(); public native SL_PoseData timestamp(long setter);
+	public native @ByRef SL_Quaternion rotation(); public native SL_PoseData rotation(SL_Quaternion setter);
+	public native @ByRef SL_Vector3 translation(); public native SL_PoseData translation(SL_Vector3 setter);
+	public native int pose_confidence(); public native SL_PoseData pose_confidence(int setter);
 	public native float pose_covariance(int i); public native SL_PoseData pose_covariance(int i, float setter);
 	@MemberGetter public native FloatPointer pose_covariance();
 	public native float twist(int i); public native SL_PoseData twist(int i, float setter);

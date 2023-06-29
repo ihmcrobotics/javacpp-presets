@@ -31,11 +31,6 @@ public class SL_RuntimeParameters extends Pointer {
     }
 
 	/**
-	Defines the algorithm used for depth map computation, more info : \ref SENSING_MODE definition.
-	\n default : \ref SENSING_MODE_STANDARD
-	*/
-	public native @Cast("SL_SENSING_MODE") int sensing_mode(); public native SL_RuntimeParameters sensing_mode(int setter);
-	/**
 	Provides 3D measures (point cloud and normals) in the desired reference frame (default is REFERENCE_FRAME_CAMERA)
 	\n default : \ref REFERENCE_FRAME_CAMERA
 	 */
@@ -46,6 +41,13 @@ public class SL_RuntimeParameters extends Pointer {
 	\n default : true
 	 */
 	public native @Cast("bool") boolean enable_depth(); public native SL_RuntimeParameters enable_depth(boolean setter);
+        
+        /**
+        Defines if the depth map should be completed or not, similar to the removed SENSING_MODE::FILL
+        \warning Enabling this will override the confidence values confidence_threshold and texture_confidence_threshold as well as remove_saturated_areas
+         */
+	public native @Cast("bool") boolean enable_fill_mode(); public native SL_RuntimeParameters enable_fill_mode(boolean setter);
+        
 	/**
 	Threshold to reject depth values based on their confidence.
 	\n Each depth pixel has a corresponding confidence. (\ref MEASURE "MEASURE_CONFIDENCE"), the confidence range is [1,100].
@@ -60,10 +62,10 @@ public class SL_RuntimeParameters extends Pointer {
 	\n Decreasing this value will remove depth data from image areas which are uniform.
 	 */
 	public native int texture_confidence_threshold(); public native SL_RuntimeParameters texture_confidence_threshold(int setter);
-    /**
-     Defines if the saturated area (Luminance>=255) must be removed from depth map estimation
-     \n True by default
-     \n It is recommended to keep this parameter at true because saturated area can create false detection.
-     */
-    public native @Cast("bool") boolean remove_saturated_areas(); public native SL_RuntimeParameters remove_saturated_areas(boolean setter);
+	/**
+	 Defines if the saturated area (Luminance>=255) must be removed from depth map estimation
+	 \n True by default
+	 \n It is recommended to keep this parameter at true because saturated area can create false detection.
+	 */
+	public native @Cast("bool") boolean remove_saturated_areas(); public native SL_RuntimeParameters remove_saturated_areas(boolean setter);
 }
