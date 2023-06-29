@@ -49,10 +49,85 @@ public final class ZEDTest {
 
             if (state != 0) {
                 System.err.println("Could not open camera ID: " + cameraId);
+                System.err.println(getErrorString(state));
                 continue;
             }
 
             sl_close_camera(cameraId);
         }
+    }
+
+    private static String getErrorString(int errorCode) {
+        switch (errorCode) {
+            case 0:
+                return "Success";
+            case 1:
+                return "Failure";
+            case 2:
+                return "No GPU compatible";
+            case 3:
+                return "Not enough GPU memory";
+            case 4:
+                return "Camera not detected";
+            case 5:
+                return "Sensors not initialized";
+            case 6:
+                return "Sensors not available";
+            case 7:
+                return "Invalid resolution";
+            case 8:
+                return "Low USB bandwidth";
+            case 9:
+                return "Calibration file not available";
+            case 10:
+                return "Invalid calibration file";
+            case 11:
+                return "Invalid SVO file";
+            case 12:
+                return "SVO recording error";
+            case 13:
+                return "SVO unsupported compression";
+            case 14:
+                return "End of SVO file reached";
+            case 15:
+                return "Invalid coordinate system";
+            case 16:
+                return "Invalid firmware";
+            case 17:
+                return "Invalid function parameters";
+            case 18:
+                return "CUDA error";
+            case 19:
+                return "Camera not initialized";
+            case 20:
+                return "NVIDIA driver out of date";
+            case 21:
+                return "Invalid function call";
+            case 22:
+                return "Corrupted SDK installation";
+            case 23:
+                return "Incompatible SDK version";
+            case 24:
+                return "Invalid area file";
+            case 25:
+                return "Incompatible area file";
+            case 26:
+                return "Camera failed to setup";
+            case 27:
+                return "Camera detection issue";
+            case 28:
+                return "Cannot start camera stream";
+            case 29:
+                return "No GPU detected";
+            case 30:
+                return "Plane not found";
+            case 31:
+                return "Module not compatible with camera";
+            case 32:
+                return "Motion sensors required";
+            case 33:
+                return "Module not compatible with CUDA version";
+        }
+        return "Unknown";
     }
 }
