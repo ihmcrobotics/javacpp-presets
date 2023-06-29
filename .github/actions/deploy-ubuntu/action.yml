@@ -235,6 +235,13 @@ runs:
           tar -xzvf spinnaker-3.0.0.118-amd64-pkg.tar.gz
           find -name *.deb | while read f; do ar -xv $f; $SUDO tar --totals -xvf data.tar.xz -C /; done;
         fi
+        
+        if [[ "$CI_DEPLOY_PLATFORM" == "linux-x86_64" ]] && [[ "$CI_DEPLOY_MODULE" == "zed" ]]; then
+          echo Installing ZED SDK amd64
+          curl -LO https://stereolabs.sfo2.cdn.digitaloceanspaces.com/zedsdk/4.0/ZED_SDK_Ubuntu22_cuda12.1_v4.0.4.zstd.run
+          chmod +x ZED_SDK_Ubuntu22_cuda12.1_v4.0.4.zstd.run
+          ./ZED_SDK_Ubuntu22_cuda12.1_v4.0.4.zstd.run -- silent skip_tools
+        fi
 
         GRADLE_TASK=publishToMavenLocal
         MAVEN_PHASE=install

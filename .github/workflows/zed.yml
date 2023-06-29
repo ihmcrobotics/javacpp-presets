@@ -20,11 +20,10 @@ env:
 jobs:
   linux-x86_64:
     runs-on: ubuntu-20.04
-    container: centos:7
     steps:
-      - uses: ihmcrobotics/javacpp-presets/.github/actions/deploy-centos@master
+      - uses: ihmcrobotics/javacpp-presets/.github/actions/deploy-ubuntu@zed
   redeploy:
     needs: [linux-x86_64]
     runs-on: ubuntu-20.04
     steps:
-      - uses: ihmcrobotics/javacpp-presets/.github/actions/redeploy@master
+      - uses: ihmcrobotics/javacpp-presets/.github/actions/redeploy@zed
