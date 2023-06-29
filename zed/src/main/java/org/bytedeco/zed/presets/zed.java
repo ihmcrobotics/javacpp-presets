@@ -8,7 +8,7 @@ import org.bytedeco.javacpp.tools.*;
     value = {
         @Platform(include = {"/usr/local/zed/include/sl/c_api/types_c.h",
                              "/usr/local/zed/include/sl/c_api/zed_interface.h"},
-              includepath = "/usr/local/cuda-11.7/targets/x86_64-linux/include",
+              includepath = "/usr/local/cuda-12.1/targets/x86_64-linux/include",
               linkpath = "/usr/local/zed/lib",
               link = "sl_zed_c")
     },
