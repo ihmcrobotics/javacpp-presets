@@ -73,7 +73,7 @@ public class SampleDepthSensing
             // Retrieve colored point cloud. Point cloud is aligned on left image
             sl_retrieve_measure(camera_id, point_cloud_ptr, SL_MEASURE_XYZRGBA, SL_MEM_CPU, width, height);
 
-            // Get and print distance value in mm at the center of the image
+            // Get and print distance value in m at the center of the image
             // The distance camera - object is measured using Euclidean distance
             int x = sl_mat_get_width(point_cloud_ptr) / 2;
             int y = sl_mat_get_height(point_cloud_ptr) / 2;
@@ -83,7 +83,7 @@ public class SampleDepthSensing
 
             if (!Float.isNaN(point_cloud_value.z())) {
                float distance = (float) Math.sqrt(point_cloud_value.x() * point_cloud_value.x() + point_cloud_value.y() * point_cloud_value.y() + point_cloud_value.z() + point_cloud_value.z());
-               System.out.printf("Distance to the Camera at {%f; %f; %f}: %f mm \n", point_cloud_value.x(), point_cloud_value.y(), point_cloud_value.z(), distance);
+               System.out.printf("Distance to the Camera at {%f; %f; %f}: %f m \n", point_cloud_value.x(), point_cloud_value.y(), point_cloud_value.z(), distance);
             }
             else {
                System.out.printf("Distance can not be computed at {%d; %d} \n", x, y);
