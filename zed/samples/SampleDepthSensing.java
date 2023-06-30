@@ -92,5 +92,7 @@ public class SampleDepthSensing
             i++;
          }
       }
+
+      sl_close_camera(camera_id);
    }
 }
