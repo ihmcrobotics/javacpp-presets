@@ -1,4 +1,9 @@
+import org.bytedeco.javacpp.IntPointer;
+import org.bytedeco.zed.SL_InitParameters;
+import org.bytedeco.zed.SL_RuntimeParameters;
+import org.bytedeco.zed.SL_Vector4;
 
+import static org.bytedeco.zed.global.zed.*;
 
 public class SampleDepthSensing
 {
@@ -29,5 +34,63 @@ public class SampleDepthSensing
       init_param.enable_right_side_measure(false);
       init_param.open_timeout_sec(5.0f);
       init_param.async_grab_camera_recovery(false);
+
+      // Open the camera
+      int state = sl_open_camera(camera_id, init_param, 0, "", "", 0, "", "", "");
+
+      if (state != 0) {
+         System.err.println("Error Open");
+         System.exit(1);
+      }
+
+      SL_RuntimeParameters rt_param = new SL_RuntimeParameters();
+      rt_param.enable_depth(true);
+      rt_param.confidence_threshold(95);
+      rt_param.reference_frame(SL_REFERENCE_FRAME_CAMERA);
+      rt_param.texture_confidence_threshold(100);
+      rt_param.remove_saturated_areas(true);
+
+      int width = sl_get_width(camera_id);
+      int height = sl_get_height(camera_id);
+
+      // Create image ptr
+      IntPointer image_ptr = new IntPointer(sl_mat_create_new(width, height, SL_MAT_TYPE_U8_C4, SL_MEM_CPU));
+      // Create depth ptr
+      IntPointer depth_ptr = new IntPointer(sl_mat_create_new(width, height, SL_MAT_TYPE_F32_C4, SL_MEM_CPU));
+      // Create point cloud ptr
+      IntPointer point_cloud_ptr = new IntPointer(sl_mat_create_new(width, height, SL_MAT_TYPE_F32_C4, SL_MEM_CPU));
+
+      // Capture 50 frames and stop
+      int i = 0;
+      while (i < 50) {
+         state = sl_grab(camera_id, rt_param);
+
+         if (state == 0) {
+            // Retrieve left image
+            sl_retrieve_image(camera_id, image_ptr, SL_VIEW_LEFT, SL_MEM_CPU, width, height);
+            // Retrieve depth map. depth is aligned on the left image
+            sl_retrieve_measure(camera_id, depth_ptr, SL_MEASURE_DEPTH, SL_MEM_CPU, width, height);
+            // Retrieve colored point cloud. Point cloud is aligned on left image
+            sl_retrieve_measure(camera_id, point_cloud_ptr, SL_MEASURE_XYZRGBA, SL_MEM_CPU, width, height);
+
+            // Get and print distance value in mm at the center of the image
+            // The distance camera - object is measured using Euclidean distance
+            int x = sl_mat_get_width(point_cloud_ptr) / 2;
+            int y = sl_mat_get_height(point_cloud_ptr) / 2;
+
+            SL_Vector4 point_cloud_value = new SL_Vector4();
+            sl_mat_get_value_float4(point_cloud_ptr, x, y, point_cloud_value, SL_MEM_CPU);
+
+            if (!Float.isNaN(point_cloud_value.z())) {
+               float distance = (float) Math.sqrt(point_cloud_value.x() * point_cloud_value.x() + point_cloud_value.y() * point_cloud_value.y() + point_cloud_value.z() + point_cloud_value.z());
+               System.out.printf("Distance to the Camera at {%f; %f; %f}: %f mm \n", point_cloud_value.x(), point_cloud_value.y(), point_cloud_value.z(), distance);
+            }
+            else {
+               System.out.printf("Distance can not be computed at {%d; %d} \n", x, y);
+            }
+
+            i++;
+         }
+      }
    }
 }

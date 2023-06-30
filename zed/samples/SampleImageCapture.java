@@ -70,7 +70,7 @@ public class SampleImageCapture
             sl_retrieve_image(camera_id, imagePointer, SL_VIEW_LEFT, SL_MEM_CPU, width, height);
 
             // Display the image resolution and its acquisition timestamp
-            System.out.println("Image resolution: " + width + " x " + height + " || " + sl_get_current_timestamp(camera_id));
+            System.out.printf("Image resolution: %d x %d || %d \n", width, height, sl_get_current_timestamp(camera_id));
             i++;
          }
       }
