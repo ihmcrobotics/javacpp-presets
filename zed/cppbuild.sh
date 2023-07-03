@@ -18,7 +18,7 @@ tar -xzvf ../zed-c-api-$ZED_C_VERSION.tar.gz
 cd zed-c-api-$ZED_C_VERSION
 
 case $PLATFORM in
-    linux-x86*)
+    linux-arm64)
         if [[ ! -d "/usr/local/zed" ]]; then
             echo "Please install ZED under the default installation directory: /usr/local/zed"
             exit 1
@@ -30,6 +30,21 @@ case $PLATFORM in
         # Include: /usr/local/zed/include/sl/c_api/
         # Lib: /usr/local/zed/lib/libsl_zed_c.so
         make install
+        ;;
+    linux-x86_64)
+        if [[ ! -d "/usr/local/zed" ]]; then
+            echo "Please install ZED under the default installation directory: /usr/local/zed"
+            exit 1
+        fi
+        mkdir build && cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+        make
+        # Installs to /usr/local/zed
+        # Include: /usr/local/zed/include/sl/c_api/
+        # Lib: /usr/local/zed/lib/libsl_zed_c.so
+        make install
+        ;;
+    windows-x86_64)
         ;;
     *)
         echo "Error: Platform \"$PLATFORM\" is not supported"
