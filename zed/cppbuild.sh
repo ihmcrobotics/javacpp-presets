@@ -24,7 +24,7 @@ case $PLATFORM in
             exit 1
         fi
         mkdir build && cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release
+        cmake .. -DCUDA_BIN_PATH=/usr/local/cuda-11 -DCMAKE_BUILD_TYPE=Release
         make
         # Installs to /usr/local/zed
         # Include: /usr/local/zed/include/sl/c_api/
