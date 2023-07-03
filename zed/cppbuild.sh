@@ -7,7 +7,7 @@ if [[ -z "$PLATFORM" ]]; then
     exit
 fi
 
-# Requires libusb-dev, CUDA
+# Requires libusb-dev, CUDA 11
 
 ZED_C_VERSION=4.0.4
 download https://github.com/stereolabs/zed-c-api/archive/refs/tags/v$ZED_C_VERSION.tar.gz zed-c-api-$ZED_C_VERSION.tar.gz
@@ -24,7 +24,7 @@ case $PLATFORM in
             exit 1
         fi
         mkdir build && cd build
-        cmake .. -DCUDA_BIN_PATH=/usr/local/cuda-11 -DCMAKE_BUILD_TYPE=Release
+        cmake .. -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-11.4 -DCMAKE_BUILD_TYPE=Release
         make
         # Installs to /usr/local/zed
         # Include: /usr/local/zed/include/sl/c_api/
@@ -37,7 +37,7 @@ case $PLATFORM in
             exit 1
         fi
         mkdir build && cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release
+        cmake .. -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-11.8 -DCMAKE_BUILD_TYPE=Release
         make
         # Installs to /usr/local/zed
         # Include: /usr/local/zed/include/sl/c_api/
