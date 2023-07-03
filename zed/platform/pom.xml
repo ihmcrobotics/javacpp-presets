@@ -35,7 +35,7 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>${javacpp.moduleId}</artifactId>
       <version>${project.version}</version>
-      <classifier>${javacpp.platform.arm64}</classifier>
+      <classifier>${javacpp.platform.linux-arm64}</classifier>
     </dependency>
   </dependencies>
 
