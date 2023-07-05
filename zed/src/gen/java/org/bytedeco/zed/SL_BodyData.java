@@ -147,7 +147,7 @@ public class SL_BodyData extends Pointer {
 	  see \ref position_covariance for the storage format
 	 */
 	public native float keypoint_covariances(int i, int j); public native SL_BodyData keypoint_covariances(int i, int j, float setter);
-	@MemberGetter public native @Cast("float(* /*[70]*/ )[6]") FloatPointer keypoint_covariances();
+	@MemberGetter public native @Cast("float(* /*[38]*/ )[6]") FloatPointer keypoint_covariances();
 	/**
 	\brief Per keypoint local position (the position of the child keypoint with respect to its parent expressed in its parent coordinate frame)
 	\note it is expressed in sl::REFERENCE_CAMERA or sl::REFERENCE_WORLD

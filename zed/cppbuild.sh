@@ -9,7 +9,7 @@ fi
 
 # Requires libusb-dev, CUDA 11
 
-ZED_C_VERSION=4.0.4
+ZED_C_VERSION=4.0.5
 download https://github.com/stereolabs/zed-c-api/archive/refs/tags/v$ZED_C_VERSION.tar.gz zed-c-api-$ZED_C_VERSION.tar.gz
 mkdir -p $PLATFORM
 cd $PLATFORM
@@ -37,7 +37,7 @@ case $PLATFORM in
             exit 1
         fi
         mkdir build && cd build
-        cmake .. -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-11.8 -DCMAKE_BUILD_TYPE=Release
+        cmake .. -DCMAKE_BUILD_TYPE=Release
         make
         # Installs to /usr/local/zed
         # Include: /usr/local/zed/include/sl/c_api/

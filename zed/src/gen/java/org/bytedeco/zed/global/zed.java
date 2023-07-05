@@ -119,6 +119,7 @@ public static final int
  */
 /** enum SL_ERROR_CODE */
 public static final int
+	/** The ZED camera is currently rebooting.*/
 	SL_ERROR_CODE_CAMERA_REBOOTING = -1,
 	/** Standard code for successful behavior.*/
 	SL_ERROR_CODE_SUCCESS = 0,
@@ -164,13 +165,13 @@ public static final int
 	SL_ERROR_CODE_NVIDIA_DRIVER_OUT_OF_DATE = 20,
 	/** The call of the function is not valid in the current context. Could be a missing call of SL_Camera::open. */
 	SL_ERROR_CODE_INVALID_FUNCTION_CALL = 21,
-	/** The SDK wasn't able to load its dependencies or somes assets are missing, the installer should be launched. */
+	/** The SDK wasn't able to load its dependencies or some assets are missing, the installer should be launched. */
 	SL_ERROR_CODE_CORRUPTED_SDK_INSTALLATION = 22,
 	/** The installed SDK is incompatible SDK used to compile the program. */
 	SL_ERROR_CODE_INCOMPATIBLE_SDK_VERSION = 23,
 	/** The given area file does not exist, check the path. */
 	SL_ERROR_CODE_INVALID_AREA_FILE = 24,
-	/** The area file does not contain enought data to be used or the SL_DEPTH_MODE used during the creation of the area file is different from the one currently set. */
+	/** The area file does not contain enough data to be used or the SL_DEPTH_MODE used during the creation of the area file is different from the one currently set. */
 	SL_ERROR_CODE_INCOMPATIBLE_AREA_FILE = 25,
 	/** Failed to open the camera at the proper resolution. Try another resolution or make sure that the UVC driver is properly installed.*/
 	SL_ERROR_CODE_CAMERA_FAILED_TO_SETUP = 26,
@@ -746,9 +747,9 @@ public static final int
 	SL_AI_MODELS_HUMAN_BODY_38_FAST_DETECTION = 6, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST
 	SL_AI_MODELS_HUMAN_BODY_38_MEDIUM_DETECTION = 7, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST
 	SL_AI_MODELS_HUMAN_BODY_38_ACCURATE_DETECTION = 8, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST
-	SL_AI_MODELS_HUMAN_BODY_70_FAST_DETECTION = 9, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST
-	SL_AI_MODELS_HUMAN_BODY_70_MEDIUM_DETECTION = 10, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST
-	SL_AI_MODELS_HUMAN_BODY_70_ACCURATE_DETECTION = 11, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST
+	SL_AI_MODELS_HUMAN_BODY_70_FAST_DETECTION = 9, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST.
+	SL_AI_MODELS_HUMAN_BODY_70_MEDIUM_DETECTION = 10, // related to sl::DETECTION_MODEL::HUMAN_BODY_MEDIUM
+	SL_AI_MODELS_HUMAN_BODY_70_ACCURATE_DETECTION = 11, // related to sl::DETECTION_MODEL::HUMAN_BODY_ACCURATE
 	SL_AI_MODELS_PERSON_HEAD_DETECTION = 12, // related to sl::DETECTION_MODEL::PERSON_HEAD_BOX
 	SL_AI_MODELS_PERSON_HEAD_ACCURATE_DETECTION = 13, // related to sl::DETECTION_MODEL::PERSON_HEAD_BOX_ACCURATE
 	SL_AI_MODELS_REID_ASSOCIATION = 14, // related to sl::BatchParameters::enable
@@ -793,13 +794,10 @@ public static final int
 	 * \brief 38 keypoint model.
 	 * Body model, including feet simplified face and hands
 	 */
-	SL_BODY_FORMAT_BODY_38 = 2,
+	SL_BODY_FORMAT_BODY_38 = 2;
 
-	/**
-	 * \brief 70 keypoint model.
-	 * Body model, including feet and full hands models (and simplified face)
-	 */
-	SL_BODY_FORMAT_BODY_70 = 3;
+// #if 0
+// #endif
 
 /** enum SL_BODY_KEYPOINTS_SELECTION */
 public static final int
@@ -931,85 +929,8 @@ public static final int
 	SL_BODY_38_PARTS_RIGHT_HAND_PINKY_1 = 37,
 	SL_BODY_38_PARTS_LAST = 38;
 
-/**
- * \brief semantic of human body parts and order of \ref ObjectData::keypoint for BODY_FORMAT::BODY_70.
- */
-/** enum SL_BODY_70_PARTS */
-public static final int
-	SL_BODY_70_PARTS_PELVIS = 0,
-	SL_BODY_70_PARTS_SPINE_1 = 1,
-	SL_BODY_70_PARTS_SPINE_2 = 2,
-	SL_BODY_70_PARTS_SPINE_3 = 3,
-	SL_BODY_70_PARTS_NECK = 4,
-	SL_BODY_70_PARTS_NOSE = 5,
-	SL_BODY_70_PARTS_LEFT_EYE = 6,
-	SL_BODY_70_PARTS_RIGHT_EYE = 7,
-	SL_BODY_70_PARTS_LEFT_EAR = 8,
-	SL_BODY_70_PARTS_RIGHT_EAR = 9,
-	SL_BODY_70_PARTS_LEFT_CLAVICLE = 10,
-	SL_BODY_70_PARTS_RIGHT_CLAVICLE = 11,
-	SL_BODY_70_PARTS_LEFT_SHOULDER = 12,
-	SL_BODY_70_PARTS_RIGHT_SHOULDER = 13,
-	SL_BODY_70_PARTS_LEFT_ELBOW = 14,
-	SL_BODY_70_PARTS_RIGHT_ELBOW = 15,
-	SL_BODY_70_PARTS_LEFT_WRIST = 16,
-	SL_BODY_70_PARTS_RIGHT_WRIST = 17,
-	SL_BODY_70_PARTS_LEFT_HIP = 18,
-	SL_BODY_70_PARTS_RIGHT_HIP = 19,
-	SL_BODY_70_PARTS_LEFT_KNEE = 20,
-	SL_BODY_70_PARTS_RIGHT_KNEE = 21,
-	SL_BODY_70_PARTS_LEFT_ANKLE = 22,
-	SL_BODY_70_PARTS_RIGHT_ANKLE = 23,
-	SL_BODY_70_PARTS_LEFT_BIG_TOE = 24,
-	SL_BODY_70_PARTS_RIGHT_BIG_TOE = 25,
-	SL_BODY_70_PARTS_LEFT_SMALL_TOE = 26,
-	SL_BODY_70_PARTS_RIGHT_SMALL_TOE = 27,
-	SL_BODY_70_PARTS_LEFT_HEEL = 28,
-	SL_BODY_70_PARTS_RIGHT_HEEL = 29,
-	// Hands
-	// Left
-	SL_BODY_70_PARTS_LEFT_HAND_THUMB_1 = 30,
-	SL_BODY_70_PARTS_LEFT_HAND_THUMB_2 = 31,
-	SL_BODY_70_PARTS_LEFT_HAND_THUMB_3 = 32,
-	SL_BODY_70_PARTS_LEFT_HAND_THUMB_4 = 33,
-	SL_BODY_70_PARTS_LEFT_HAND_INDEX_1 = 34,
-	SL_BODY_70_PARTS_LEFT_HAND_INDEX_2 = 35,
-	SL_BODY_70_PARTS_LEFT_HAND_INDEX_3 = 36,
-	SL_BODY_70_PARTS_LEFT_HAND_INDEX_4 = 37,
-	SL_BODY_70_PARTS_LEFT_HAND_MIDDLE_1 = 38,
-	SL_BODY_70_PARTS_LEFT_HAND_MIDDLE_2 = 39,
-	SL_BODY_70_PARTS_LEFT_HAND_MIDDLE_3 = 40,
-	SL_BODY_70_PARTS_LEFT_HAND_MIDDLE_4 = 41,
-	SL_BODY_70_PARTS_LEFT_HAND_RING_1 = 42,
-	SL_BODY_70_PARTS_LEFT_HAND_RING_2 = 43,
-	SL_BODY_70_PARTS_LEFT_HAND_RING_3 = 44,
-	SL_BODY_70_PARTS_LEFT_HAND_RING_4 = 45,
-	SL_BODY_70_PARTS_LEFT_HAND_PINKY_1 = 46,
-	SL_BODY_70_PARTS_LEFT_HAND_PINKY_2 = 47,
-	SL_BODY_70_PARTS_LEFT_HAND_PINKY_3 = 48,
-	SL_BODY_70_PARTS_LEFT_HAND_PINKY_4 = 49,
-	//Right
-	SL_BODY_70_PARTS_RIGHT_HAND_THUMB_1 = 50,
-	SL_BODY_70_PARTS_RIGHT_HAND_THUMB_2 = 51,
-	SL_BODY_70_PARTS_RIGHT_HAND_THUMB_3 = 52,
-	SL_BODY_70_PARTS_RIGHT_HAND_THUMB_4 = 53,
-	SL_BODY_70_PARTS_RIGHT_HAND_INDEX_1 = 54,
-	SL_BODY_70_PARTS_RIGHT_HAND_INDEX_2 = 55,
-	SL_BODY_70_PARTS_RIGHT_HAND_INDEX_3 = 56,
-	SL_BODY_70_PARTS_RIGHT_HAND_INDEX_4 = 57,
-	SL_BODY_70_PARTS_RIGHT_HAND_MIDDLE_1 = 58,
-	SL_BODY_70_PARTS_RIGHT_HAND_MIDDLE_2 = 59,
-	SL_BODY_70_PARTS_RIGHT_HAND_MIDDLE_3 = 60,
-	SL_BODY_70_PARTS_RIGHT_HAND_MIDDLE_4 = 61,
-	SL_BODY_70_PARTS_RIGHT_HAND_RING_1 = 62,
-	SL_BODY_70_PARTS_RIGHT_HAND_RING_2 = 63,
-	SL_BODY_70_PARTS_RIGHT_HAND_RING_3 = 64,
-	SL_BODY_70_PARTS_RIGHT_HAND_RING_4 = 65,
-	SL_BODY_70_PARTS_RIGHT_HAND_PINKY_1 = 66,
-	SL_BODY_70_PARTS_RIGHT_HAND_PINKY_2 = 67,
-	SL_BODY_70_PARTS_RIGHT_HAND_PINKY_3 = 68,
-	SL_BODY_70_PARTS_RIGHT_HAND_PINKY_4 = 69,
-	SL_BODY_70_PARTS_LAST = 70;
+// #if 0
+// #endif
 
 /**
 \brief Change the type of outputed position for the Fusion positional tracking (raw data or fusion data projected into zed camera)

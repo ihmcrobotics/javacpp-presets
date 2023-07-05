@@ -194,4 +194,14 @@ public class SL_InitParameters extends Pointer {
 	 The default behavior is synchronous, like previous ZED SDK versions
 	 */
 	public native @Cast("bool") boolean async_grab_camera_recovery(); public native SL_InitParameters async_grab_camera_recovery(boolean setter);
+	/**
+	 Define a computation upper limit to the grab frequency.
+	 This can be useful to get a known constant fixed rate or limit the computation load while keeping a short exposure time by setting a high camera capture framerate.
+	 \n The value should be inferior to the InitParameters::camera_fps and strictly positive. It has no effect when reading an SVO file.
+	 \n This is an upper limit and won't make a difference if the computation is slower than the desired compute capping fps.
+	 \note Internally the grab function always tries to get the latest available image while respecting the desired fps as much as possible.
+	 default is 0.
+	 */
+	public native float grab_compute_capping_fps(); public native SL_InitParameters grab_compute_capping_fps(float setter);
+
 }

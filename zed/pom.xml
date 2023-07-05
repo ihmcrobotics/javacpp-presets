@@ -11,7 +11,7 @@
 
   <groupId>org.bytedeco</groupId>
   <artifactId>zed</artifactId>
-  <version>4.0.4_2-${project.parent.version}</version>
+  <version>4.0.5-${project.parent.version}</version>
   <name>JavaCPP Presets for zed</name>
 
   <dependencies>
