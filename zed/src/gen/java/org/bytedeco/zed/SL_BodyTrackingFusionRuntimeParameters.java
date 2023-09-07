@@ -9,6 +9,9 @@ import org.bytedeco.javacpp.annotation.*;
 import static org.bytedeco.zed.global.zed.*;
 
 
+/**
+\brief Holds the options used to change the behavior of the body tracking module at runtime.
+ */
 @Properties(inherit = org.bytedeco.zed.presets.zed.class)
 public class SL_BodyTrackingFusionRuntimeParameters extends Pointer {
     static { Loader.load(); }
@@ -28,19 +31,23 @@ public class SL_BodyTrackingFusionRuntimeParameters extends Pointer {
     }
 
 	/**
-	* \brief if the fused skeleton has less than skeleton_minimum_allowed_keypoints keypoints, it will be discarded. Default is -1.
-	 *
+	 * \brief If the fused skeleton has less than skeleton_minimum_allowed_keypoints keypoints, it will be discarded.
+	 * 
+	 * Default: -1.
 	 */
 	public native int skeleton_minimum_allowed_keypoints(); public native SL_BodyTrackingFusionRuntimeParameters skeleton_minimum_allowed_keypoints(int setter);
 	/**
-	 * \brief if a skeleton was detected in less than skeleton_minimum_allowed_camera cameras, it will be discarded
+	 * \brief If a skeleton was detected in less than skeleton_minimum_allowed_camera cameras, it will be discarded.
 	 *
+	 * Default: -1.
 	 */
 	public native int skeleton_minimum_allowed_camera(); public native SL_BodyTrackingFusionRuntimeParameters skeleton_minimum_allowed_camera(int setter);
 
 	/**
-	 * \brief this value controls the smoothing of the tracked or fitted fused skeleton.
-	 * it is ranged from 0 (low smoothing) and 1 (high smoothing)
+	 * \brief This value controls the smoothing of the tracked or fitted fused skeleton.
+	 * 
+	 * It is ranged from 0 (low smoothing) and 1 (high smoothing).
+	 * \n Default: 0.
 	 */
 	public native float skeleton_smoothing(); public native SL_BodyTrackingFusionRuntimeParameters skeleton_smoothing(float setter);
 }

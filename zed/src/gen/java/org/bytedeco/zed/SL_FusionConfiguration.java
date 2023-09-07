@@ -9,6 +9,9 @@ import org.bytedeco.javacpp.annotation.*;
 import static org.bytedeco.zed.global.zed.*;
 
 
+/**
+\brief Useful struct to store the Fusion configuration, can be read from /write to a JSON file.
+ */
 @Properties(inherit = org.bytedeco.zed.presets.zed.class)
 public class SL_FusionConfiguration extends Pointer {
     static { Loader.load(); }
@@ -27,9 +30,28 @@ public class SL_FusionConfiguration extends Pointer {
         return new SL_FusionConfiguration((Pointer)this).offsetAddress(i);
     }
 
+	/**
+	The serial number of the used ZED camera.
+	*/
 	public native int serial_number(); public native SL_FusionConfiguration serial_number(int setter);
+
+	/**
+	The communication parameters to connect this camera to the Fusion.
+	*/
 	public native @ByRef SL_CommunicationParameters comm_param(); public native SL_FusionConfiguration comm_param(SL_CommunicationParameters setter);
+
+	/**
+	The WORLD SL_Vector3 of the camera for Fusion.
+	*/
 	public native @ByRef @Name("position") SL_Vector3 _position(); public native SL_FusionConfiguration _position(SL_Vector3 setter);
+
+	/**
+	The WORLD SL_Quaternion of the camera for Fusion.
+	*/
 	public native @ByRef SL_Quaternion rotation(); public native SL_FusionConfiguration rotation(SL_Quaternion setter);
+
+	/**
+	The input type for the current camera.
+	*/
 	public native @ByRef SL_InputType input_type(); public native SL_FusionConfiguration input_type(SL_InputType setter);
 }

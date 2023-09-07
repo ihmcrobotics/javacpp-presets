@@ -45,4 +45,6 @@ public class SL_CameraParameters extends Pointer {
 	/** Diagonal field of view, in degrees.*/
 	public native float d_fov(); public native SL_CameraParameters d_fov(float setter);
 	public native @ByRef SL_Resolution image_size(); public native SL_CameraParameters image_size(SL_Resolution setter); /** size in pixels of the images given by the camera.*/
+	/** real focal length in millimeters*/
+	public native float focal_length_metric(); public native SL_CameraParameters focal_length_metric(float setter);
 }

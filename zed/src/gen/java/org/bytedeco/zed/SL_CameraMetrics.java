@@ -9,6 +9,9 @@ import org.bytedeco.javacpp.annotation.*;
 import static org.bytedeco.zed.global.zed.*;
 
 
+/**
+\brief Holds the metrics of a sender in the fusion process.
+ */
 @Properties(inherit = org.bytedeco.zed.presets.zed.class)
 public class SL_CameraMetrics extends Pointer {
     static { Loader.load(); }
@@ -29,21 +32,39 @@ public class SL_CameraMetrics extends Pointer {
 
 	public native @ByRef SL_CameraIdentifier uuid(); public native SL_CameraMetrics uuid(SL_CameraIdentifier setter);
 
-	// gives the fps of the received datas
+	/**
+	 * \brief FPS of the received data.
+	 * 
+	 */
 	public native float received_fps(); public native SL_CameraMetrics received_fps(float setter);
 
-	// gives the latency (in second) of the received datas
+	/**
+	 * \brief Latency (in seconds) of the received data.
+	 * 
+	 */
 	public native float received_latency(); public native SL_CameraMetrics received_latency(float setter);
 
-	// gives the latency (in second) after Fusion synchronization
+	/**
+	 * \brief Latency (in seconds) after Fusion synchronization.
+	 * 
+	 */
 	public native float synced_latency(); public native SL_CameraMetrics synced_latency(float setter);
 
-	// if no data present is set to false
+	/**
+	 * \brief If no data present is set to false.
+	 * 
+	 */
 	public native @Cast("bool") boolean is_present(); public native SL_CameraMetrics is_present(boolean setter);
 
-	// percent of detection par image during the last second in %, a low values means few detections occurs lately
+	/**
+	 * \brief Gives the percent of detection par image during the last second in %, a low value means few detections occurs lately.
+	 * 
+	 */
 	public native float ratio_detection(); public native SL_CameraMetrics ratio_detection(float setter);
 
-	// percent of detection par image during the last second in %, a low values means few detections occurs lately
+	/**
+	 * \brief Average time difference for the current fused data.
+	 * 
+	 */
 	public native float delta_ts(); public native SL_CameraMetrics delta_ts(float setter);
 }

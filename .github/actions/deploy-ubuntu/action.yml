@@ -245,9 +245,9 @@ runs:
         
         if [[ "$CI_DEPLOY_PLATFORM" == "linux-x86_64" ]] && [[ "$CI_DEPLOY_MODULE" == "zed" ]]; then
           echo Installing ZED SDK amd64
-          curl -LO https://stereolabs.sfo2.cdn.digitaloceanspaces.com/zedsdk/4.0/ZED_SDK_Ubuntu22_cuda11.8_v4.0.5.zstd.run
-          chmod +x ZED_SDK_Ubuntu22_cuda11.8_v4.0.5.zstd.run
-          ./ZED_SDK_Ubuntu22_cuda11.8_v4.0.5.zstd.run -- silent skip_tools
+          curl -LO https://stereolabs.sfo2.cdn.digitaloceanspaces.com/zedsdk/4.0/ZED_SDK_Ubuntu22_cuda11.8_v4.0.6.zstd.run
+          chmod +x ZED_SDK_Ubuntu22_cuda11.8_v4.0.6.zstd.run
+          ./ZED_SDK_Ubuntu22_cuda11.8_v4.0.6.zstd.run -- silent skip_tools
         fi
 
         GRADLE_TASK=publishToMavenLocal

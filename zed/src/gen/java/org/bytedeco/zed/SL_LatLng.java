@@ -9,6 +9,10 @@ import org.bytedeco.javacpp.annotation.*;
 import static org.bytedeco.zed.global.zed.*;
 
 
+/**
+ * \brief Represents a world position in LatLng format.
+ *
+ */
 @Properties(inherit = org.bytedeco.zed.presets.zed.class)
 public class SL_LatLng extends Pointer {
     static { Loader.load(); }
@@ -27,7 +31,19 @@ public class SL_LatLng extends Pointer {
         return new SL_LatLng((Pointer)this).offsetAddress(i);
     }
 
+	/**
+	 * \brief Latitude coordinate in radian.
+	 *
+	 */
 	public native double latitude(); public native SL_LatLng latitude(double setter);
+	/**
+	 * \brief Longitude coordinate in radian.
+	 *
+	 */
 	public native double longitude(); public native SL_LatLng longitude(double setter);
+	/**
+	 * \brief Altitude coordinate in meters.
+	 *
+	 */
 	public native double altitude(); public native SL_LatLng altitude(double setter);
 }

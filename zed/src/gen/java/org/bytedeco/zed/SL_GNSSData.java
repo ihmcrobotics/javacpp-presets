@@ -10,10 +10,9 @@ import static org.bytedeco.zed.global.zed.*;
 
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////// GNSS API //////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+/**
+\brief Contains all GNSS data to be used for positional tracking as prior.
+ */
 @Properties(inherit = org.bytedeco.zed.presets.zed.class)
 public class SL_GNSSData extends Pointer {
     static { Loader.load(); }
@@ -32,19 +31,46 @@ public class SL_GNSSData extends Pointer {
         return new SL_GNSSData((Pointer)this).offsetAddress(i);
     }
 
-	// longitude in radian
+	/**
+	 * \brief Longitude in radian.
+	 * 
+	 */
 	public native double longitude(); public native SL_GNSSData longitude(double setter);
-	// latitude in radian
+	/**
+	 * \brief Latitude in radian.
+	 * 
+	 */
 	public native double latitude(); public native SL_GNSSData latitude(double setter);
-	// altitude in meter
+	/**
+	 * \brief Altitude in meters.
+	 * 
+	 */
 	public native double altitude(); public native SL_GNSSData altitude(double setter);
-	// Timestamp
+	/**
+	 * \brief Timestamp of GNSS position, must be aligned with camera time reference.
+	 * 
+	 */
 	public native @Cast("unsigned long long") long ts(); public native SL_GNSSData ts(long setter);
-
+	/**
+	 * \brief Position covariance in meter must be expressed in ENU coordinate system.
+	 * For eph, epv GNSS sensors, set it as follow: {eph*eph, 0, 0, 0, eph*eph, 0, 0, 0, epv*epv}.
+	 *
+	 */
 	public native double position_covariance(int i); public native SL_GNSSData position_covariance(int i, double setter);
 	@MemberGetter public native DoublePointer position_covariance();
-
+	/**
+	 * \brief Longitude standard deviation.
+	 *
+	 */
 	public native double longitude_std(); public native SL_GNSSData longitude_std(double setter);
+	/**
+	 * \brief Latitude standard deviation.
+	 *
+	 */
 	public native double latitude_std(); public native SL_GNSSData latitude_std(double setter);
+	/**
+	 * \brief Altitude standard deviation.
+	 *
+	 */
 	public native double altitude_std(); public native SL_GNSSData altitude_std(double setter);
 }

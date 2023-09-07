@@ -9,7 +9,10 @@ import org.bytedeco.javacpp.annotation.*;
 import static org.bytedeco.zed.global.zed.*;
 
 
-
+/**
+ * \brief Holds Geo reference position.
+ *
+ */
 @Properties(inherit = org.bytedeco.zed.presets.zed.class)
 public class SL_GeoPose extends Pointer {
     static { Loader.load(); }
@@ -28,12 +31,38 @@ public class SL_GeoPose extends Pointer {
         return new SL_GeoPose((Pointer)this).offsetAddress(i);
     }
 
+	/**
+	 * The translation defining the pose in ENU.
+	 */
 	public native @ByRef SL_Vector3 translation(); public native SL_GeoPose translation(SL_Vector3 setter);
+	/**
+	 * The rotation defining the pose in ENU.
+	 */
 	public native @ByRef SL_Quaternion rotation(); public native SL_GeoPose rotation(SL_Quaternion setter);
+	/**
+	 * The pose covariance in ENU.
+	 */
 	public native float pose_covariance(int i); public native SL_GeoPose pose_covariance(int i, float setter);
 	@MemberGetter public native FloatPointer pose_covariance();
+	/**
+	 * The horizontal accuracy.
+	 */
 	public native double horizontal_accuracy(); public native SL_GeoPose horizontal_accuracy(double setter);
+	/**
+	 * The vertical accuracy.
+	*/
 	public native double vertical_accuracy(); public native SL_GeoPose vertical_accuracy(double setter);
+	/**
+	 * The latitude, longitude, altitude.
+	 */
 	public native @ByRef SL_LatLng latlng_coordinates(); public native SL_GeoPose latlng_coordinates(SL_LatLng setter);
+	/**
+	 * The heading.
+	 */
 	public native double heading(); public native SL_GeoPose heading(double setter);
+	/**
+	 * \brief The timestamp of SL_GeoPose.
+	 *
+	 */
+	public native @Cast("unsigned long long") long timestamp(); public native SL_GeoPose timestamp(long setter);
 }

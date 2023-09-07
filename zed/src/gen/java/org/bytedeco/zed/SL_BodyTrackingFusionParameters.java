@@ -9,6 +9,9 @@ import org.bytedeco.javacpp.annotation.*;
 import static org.bytedeco.zed.global.zed.*;
 
 
+/**
+\brief Holds the options used to initialize the body tracking module of the \ref Fusion.
+ */
 @Properties(inherit = org.bytedeco.zed.presets.zed.class)
 public class SL_BodyTrackingFusionParameters extends Pointer {
     static { Loader.load(); }
@@ -28,12 +31,17 @@ public class SL_BodyTrackingFusionParameters extends Pointer {
     }
 
 	/**
-	* \brief Defines if the object detection will track objects across images flow
+	* \brief Defines if the object detection will track objects across images flow.
+	*
+	* Default: true
 	*/
 	public native @Cast("bool") boolean enable_tracking(); public native SL_BodyTrackingFusionParameters enable_tracking(boolean setter);
 
 	/**
 	* \brief Defines if the body fitting will be applied
+	*
+	* Default: false
+	* \note If you enable it and the camera provides data as BODY_18 the fused body format will be BODY_34.
 	*/
 	public native @Cast("bool") boolean enable_body_fitting(); public native SL_BodyTrackingFusionParameters enable_body_fitting(boolean setter);
 }

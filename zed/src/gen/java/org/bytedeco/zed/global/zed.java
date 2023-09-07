@@ -193,22 +193,23 @@ public static final int
 /**
 \brief Represents the available resolution defined in the \ref cameraResolution list.
 \note The VGA resolution does not respect the 640*480 standard to better fit the camera sensor (672*376 is used).
+\warning All resolution are not available for every camera. You can find the available resolutions for each camera in <a href="https://www.stereolabs.com/docs/video/camera-controls#selecting-a-resolution">our documentation</a>.
  */
 /** enum SL_RESOLUTION */
 public static final int
 	/** 2208*1242, available framerates: 15 fps.*/
 	SL_RESOLUTION_HD2K = 0,
-	/** 1920*1080, available framerates: 15, 30 fps.*/
+	/** 1920*1080, available framerates: 15, 30, 60 fps.*/
 	SL_RESOLUTION_HD1080 = 1,
-	/** 1920*1200 (x2), available framerates: 30,60 fps. (ZED-X(M) only)*/
+	/** 1920*1200, available framerates: 15, 30, 60 fps.*/
 	SL_RESOLUTION_HD1200 = 2,
 	/** 1280*720, available framerates: 15, 30, 60 fps.*/
 	SL_RESOLUTION_HD720 = 3,
-	/** 960*600 (x2), available framerates: 60, 120 fps. (ZED-X(M) only) */
+	/** 960*600, available framerates: 15, 30, 60, 120 fps.*/
 	SL_RESOLUTION_SVGA = 4,
 	/** 672*376, available framerates: 15, 30, 60, 100 fps.*/
 	SL_RESOLUTION_VGA = 5,
-	/** Select the resolution compatible with camera, on ZEDX HD1200, HD720 otherwise */
+	/** Select the resolution compatible with camera, on ZED X HD1200, HD720 otherwise */
 	SL_RESOLUTION_AUTO = 6;
 
 /**
@@ -747,14 +748,14 @@ public static final int
 	SL_AI_MODELS_HUMAN_BODY_38_FAST_DETECTION = 6, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST
 	SL_AI_MODELS_HUMAN_BODY_38_MEDIUM_DETECTION = 7, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST
 	SL_AI_MODELS_HUMAN_BODY_38_ACCURATE_DETECTION = 8, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST
-	SL_AI_MODELS_HUMAN_BODY_70_FAST_DETECTION = 9, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST.
-	SL_AI_MODELS_HUMAN_BODY_70_MEDIUM_DETECTION = 10, // related to sl::DETECTION_MODEL::HUMAN_BODY_MEDIUM
-	SL_AI_MODELS_HUMAN_BODY_70_ACCURATE_DETECTION = 11, // related to sl::DETECTION_MODEL::HUMAN_BODY_ACCURATE
-	SL_AI_MODELS_PERSON_HEAD_DETECTION = 12, // related to sl::DETECTION_MODEL::PERSON_HEAD_BOX
-	SL_AI_MODELS_PERSON_HEAD_ACCURATE_DETECTION = 13, // related to sl::DETECTION_MODEL::PERSON_HEAD_BOX_ACCURATE
-	SL_AI_MODELS_REID_ASSOCIATION = 14, // related to sl::BatchParameters::enable
-	SL_AI_MODELS_NEURAL_DEPTH = 15, // related to sl::DEPTH_MODE::NEURAL
-	SL_AI_MODELS_LAST = 16;
+	//SL_AI_MODELS_HUMAN_BODY_70_FAST_DETECTION, // related to sl::DETECTION_MODEL::HUMAN_BODY_FAST.
+	//SL_AI_MODELS_HUMAN_BODY_70_MEDIUM_DETECTION, // related to sl::DETECTION_MODEL::HUMAN_BODY_MEDIUM
+	//SL_AI_MODELS_HUMAN_BODY_70_ACCURATE_DETECTION, // related to sl::DETECTION_MODEL::HUMAN_BODY_ACCURATE
+	SL_AI_MODELS_PERSON_HEAD_DETECTION = 9, // related to sl::DETECTION_MODEL::PERSON_HEAD_BOX
+	SL_AI_MODELS_PERSON_HEAD_ACCURATE_DETECTION = 10, // related to sl::DETECTION_MODEL::PERSON_HEAD_BOX_ACCURATE
+	SL_AI_MODELS_REID_ASSOCIATION = 11, // related to sl::BatchParameters::enable
+	SL_AI_MODELS_NEURAL_DEPTH = 12, // related to sl::DEPTH_MODE::NEURAL
+	SL_AI_MODELS_LAST = 13;
 
 /**
 \brief Lists of supported bounding box preprocessing
@@ -933,12 +934,14 @@ public static final int
 // #endif
 
 /**
-\brief Change the type of outputed position for the Fusion positional tracking (raw data or fusion data projected into zed camera)
+* \brief Change the type of outputted position (raw data or fusion data projected into zed camera).
 */
 /** enum SL_POSITION_TYPE */
 public static final int
-	SL_POSITION_TYPE_RAW = 0, /*The output position will be the raw position data*/
-	SL_POSITION_TYPE_FUSION = 1, /*The output position will be the fused position projected into the requested camera repository*/
+	/** The output position will be the raw position data. */
+	SL_POSITION_TYPE_RAW = 0,
+	/** The output position will be the fused position projected into the requested camera repository. */
+	SL_POSITION_TYPE_FUSION = 1,
 	/**\cond SHOWHIDDEN  */
 	SL_POSITION_TYPE_LAST = 2;
 	/**\endcond */
@@ -973,6 +976,9 @@ public static final int
 
 
 // Targeting ../SL_PositionalTrackingParameters.java
+
+
+// Targeting ../SL_PlaneDetectionParameters.java
 
 
 // Targeting ../SL_RecordingStatus.java
@@ -1064,46 +1070,59 @@ public static final int
 /////////////////////////////// FUSION API /////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+\enum SL_FUSION_ERROR_CODE
+\brief Lists the types of error that can be raised by the Fusion.
+*/
 /** enum SL_FUSION_ERROR_CODE */
 public static final int
-	SL_FUSION_ERROR_CODE_NO_NEW_DATA_AVAILABLE = -10, /** < All data from all sources were consumed, no new process available.*/
-	SL_FUSION_ERROR_CODE_INVALID_TIMESTAMP = -9, /** < Problem was detected with ingested timestamp*/
-	SL_FUSION_ERROR_CODE_INVALID_COVARIANCE = -8, /** < Problem was detected with ingested covariance */
-	/** The requested body tracking model is not available*/
+	/** Senders are using different body formats. Consider changing them. */
 	SL_FUSION_ERROR_CODE_WRONG_BODY_FORMAT = -7,
-	/** The following module was not enabled*/
+	/** The following module was not enabled. */
 	SL_FUSION_ERROR_CODE_NOT_ENABLE = -6,
-	/** Some source are provided by SVO and some sources are provided by LIVE stream */
+	/** Some sources are provided by SVO and others by LIVE stream. */
 	SL_FUSION_ERROR_CODE_INPUT_FEED_MISMATCH = -5,
-	/** Connection timed out ... impossible to reach the sender... this may be due to ZedHub absence*/
+	/** Connection timed out. Unable to reach the sender. Verify the sender's IP/port. */
 	SL_FUSION_ERROR_CODE_CONNECTION_TIMED_OUT = -4,
-	/** Detect multiple instance of SHARED_MEMORY communicator ... only one is authorised*/
+	/** Intra-process shared memory allocation issue. Multiple connections to the same data. */
 	SL_FUSION_ERROR_CODE_MEMORY_ALREADY_USED = -3,
-	/** The IP format provided is wrong, please provide IP in this format a.b.c.d where (a, b, c, d) are numbers between 0 and 255.*/
+	/** The provided IP address format is incorrect. Please provide the IP in the format 'a.b.c.d', where (a, b, c, d) are numbers between 0 and 255. */
 	SL_FUSION_ERROR_CODE_BAD_IP_ADDRESS = -2,
-	/** Standard code for unsuccessful behavior.*/
+	/** Standard code for unsuccessful behavior. */
 	SL_FUSION_ERROR_CODE_FAILURE = -1,
+	/** Standard code for successful behavior. */
 	SL_FUSION_ERROR_CODE_SUCCESS = 0,
-	/** Some big differences has been observed between senders FPS*/
+	/** Significant differences observed between sender's FPS. */
 	SL_FUSION_ERROR_CODE_FUSION_ERRATIC_FPS = 1,
-	/** At least one sender has fps lower than 10 FPS*/
-	SL_FUSION_ERROR_CODE_FUSION_FPS_TOO_LOW = 2;
+	/** At least one sender has an FPS lower than 10 FPS. */
+	SL_FUSION_ERROR_CODE_FUSION_FPS_TOO_LOW = 2,
+	/** Problem detected with ingested timestamp. Sample data will be ignored. */
+	SL_FUSION_ERROR_CODE_INVALID_TIMESTAMP = 3,
+	/** Problem detected with ingested covariance. Sample data will be ignored. */
+	SL_FUSION_ERROR_CODE_INVALID_COVARIANCE = 4,
+	/** All data from all sources has been consumed. No new data is available for processing. */
+	SL_FUSION_ERROR_CODE_NO_NEW_DATA_AVAILABLE = 5;
 
+/**
+\enum SL_SENDER_ERROR_CODE
+\brief Lists the types of error that can be raised during the Fusion by senders.
+*/
 /** enum SL_SENDER_ERROR_CODE */
 public static final int
-	/** the sender has been disconnected*/
+	/** The sender has been disconnected.*/
 	SL_SENDER_ERROR_CODE_DISCONNECTED = -1,
+	/** Standard code for successful behavior.*/
 	SL_SENDER_ERROR_CODE_SUCCESS = 0,
-	/** the sender has encountered an grab error*/
+	/** The sender encountered a grab error.*/
 	SL_SENDER_ERROR_CODE_GRAB_ERROR = 1,
-	/** the sender does not run with a constant frame rate*/
+	/** The sender does not run with a constant frame rate.*/
 	SL_SENDER_ERROR_CODE_ERRATIC_FPS = 2,
-	/** fps lower than 10 FPS*/
+	/** The frame rate of the sender is lower than 10 FPS.*/
 	SL_SENDER_ERROR_CODE_FPS_TOO_LOW = 3;
 
 /** enum SL_COMM_TYPE */
 public static final int
-	SL_COMM_TYPE_LOCAL_NETWORK = 0, /* the sender and receiver are on the samed local network and communicate by RTP, communication can be affected by the network load.*/
+	SL_COMM_TYPE_LOCAL_NETWORK = 0, /* the sender and receiver are on the same local network and communicate by RTP, communication can be affected by the network load.*/
 	SL_COMM_TYPE_INTRA_PROCESS = 1; /* both sender and receiver are declared by the same process, can be in different threads, this communication is optimized.*/
 // Targeting ../SL_CommunicationParameters.java
 
@@ -1112,9 +1131,6 @@ public static final int
 
 
 // Targeting ../SL_InitFusionParameters.java
-
-
-// Targeting ../SL_PositionalTrackingFusionParameters.java
 
 
 // Targeting ../SL_BodyTrackingFusionParameters.java
@@ -1132,6 +1148,23 @@ public static final int
 // Targeting ../SL_FusionMetrics.java
 
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////// GNSS API //////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+\brief Current state of GNSS fusion.
+*/
+/** enum SL_GNSS_CALIBRATION_STATE */
+public static final int
+	/** The GNSS/VIO calibration has not been completed yet. Please continue moving the robot while ingesting GNSS data to perform the calibration.*/
+	SL_GNSS_CALIBRATION_STATE_NOT_CALIBRATED = 0,
+	/** The GNSS/VIO calibration is completed.*/
+	SL_GNSS_CALIBRATION_STATE_CALIBRATED = 1,
+	/** A GNSS/VIO re-calibration is in progress in the background. Current geo-tracking services may not be entirely accurate.*/
+	SL_GNSS_CALIBRATION_STATE_RE_CALIBRATION_IN_PROGRESS = 2;
 // Targeting ../SL_GNSSData.java
 
 
@@ -1147,6 +1180,15 @@ public static final int
 // Targeting ../SL_UTM.java
 
 
+// Targeting ../SL_GNSSCalibrationParameters.java
+
+
+// Targeting ../SL_PositionalTrackingFusionParameters.java
+
+
+
+// #if 0
+// #endif
 
 // #endif
 
@@ -1270,7 +1312,7 @@ public static final int
     /**
     \brief Defines a region of interest to focus on for all the SDK, discarding other parts.
     @param camera_id of the camera instance.
-    @param roi_mask: the Mat defining the requested region of interest, all pixel set to 0 will be discard. If empty, set all pixels as valid, otherwise should fit the resolution of the current instance and its type should be U8_C1.
+    @param roi_mask: the Mat defining the requested region of interest, pixels lower than 127 will be discard. If empty, set all pixels as valid, otherwise should fit the resolution of the current instance and its type should be U8_C1/C3/C4.
     @return An ERROR_CODE if something went wrong.
      */
     public static native int sl_set_region_of_interest(int camera_id, Pointer roi_mask);
@@ -2059,7 +2101,7 @@ public static final int
     @param thres : Check if area is enough for Unity. If true, removes smaller planes.
     @return Data of the detected plane.
      */
-    public static native SL_PlaneData sl_find_plane_at_hit(int camera_id, @ByVal SL_Vector2 pixel, @Cast("bool") boolean thres);
+    public static native SL_PlaneData sl_find_plane_at_hit(int camera_id, @ByVal SL_Vector2 pixel, SL_PlaneDetectionParameters params, @Cast("bool") boolean thres);
     /**
     \brief Using data from a detected floor plane, updates supplied vertex and triangles arrays with data needed to make a mesh that represents it.
     @param camera_id : id of the camera instance.
@@ -2443,14 +2485,21 @@ public static final int
     public static native @Cast("SL_FUSION_ERROR_CODE") int sl_fusion_update_pose(SL_CameraIdentifier uuid, SL_Vector3 pose_translation, SL_Quaternion pose_rotation);
     
     /*
-    * \brief update the pose of the camera in the fusion coordinate space
-    * \param [in] uuid : unique ID that is associated with the camera for easy access.
-    * \param [in] pose_translation : new position of the camera
-    * \param [in] pose_rotation : new orientation of the camera
-    * \return SL_FUSION_ERROR_CODE
+    * \brief Returns the state of a connected data sender.
+    * \param [in] uuid : Identifier of the camera.
+    * \return SL_SENDER_ERROR_CODE : State of the sender 
     * */
     public static native @Cast("SL_SENDER_ERROR_CODE") int sl_fusion_get_sender_state(SL_CameraIdentifier uuid);
 
+    /**
+    \brief Read a Configuration JSON file to configure a fusion process.
+    @param json_config_filename : The name of the JSON file containing the configuration
+    @param coord_sys : The COORDINATE_SYSTEM in which you want the World Pose to be in.
+    @param unit : The UNIT in which you want the World Pose to be in.
+    <p>
+    @return a vector of \ref SL_FusionConfiguration for all the camera present in the file.
+    \note empty if no data were found for the requested camera.
+     */
     public static native void sl_fusion_read_configuration_file(@Cast("char*") BytePointer json_config_filename, @Cast("SL_COORDINATE_SYSTEM") int coord_system, @Cast("SL_UNIT") int unit, SL_FusionConfiguration configs, IntPointer nb_cameras);
     public static native void sl_fusion_read_configuration_file(@Cast("char*") ByteBuffer json_config_filename, @Cast("SL_COORDINATE_SYSTEM") int coord_system, @Cast("SL_UNIT") int unit, SL_FusionConfiguration configs, IntBuffer nb_cameras);
     public static native void sl_fusion_read_configuration_file(@Cast("char*") byte[] json_config_filename, @Cast("SL_COORDINATE_SYSTEM") int coord_system, @Cast("SL_UNIT") int unit, SL_FusionConfiguration configs, int[] nb_cameras);
@@ -2508,7 +2557,7 @@ public static final int
      * @param uuid Camera identifier
      * @return POSITIONAL_TRACKING_STATE is the current state of the tracking process
      */
-    public static native @Cast("SL_POSITIONAL_TRACKING_STATE") int sl_fusion_get_position(SL_PoseData pose, @Cast("SL_REFERENCE_FRAME") int reference_frame, @Cast("SL_COORDINATE_SYSTEM") int coordinate_system, @Cast("SL_UNIT") int unit,
+    public static native @Cast("SL_POSITIONAL_TRACKING_STATE") int sl_fusion_get_position(SL_PoseData pose, @Cast("SL_REFERENCE_FRAME") int reference_frame, @Cast("SL_UNIT") int unit,
                                                                SL_CameraIdentifier uuid, @Cast("SL_POSITION_TYPE") int retrieve_type);
 
     /**
@@ -2539,26 +2588,49 @@ public static final int
      * \brief returns the current GeoPose
      * @param pose [out]: the current GeoPose
      * @param radian [in] : true if the geopose is set in radian.
-     * @return POSITIONAL_TRACKING_STATE is the current state of the tracking process
+     * @return GNSS_CALIBRATION_STATE is the current state of the tracking process
      */
-    public static native @Cast("SL_POSITIONAL_TRACKING_STATE") int sl_fusion_get_geo_pose(SL_GeoPose pose, @Cast("bool") boolean radian);
+    public static native @Cast("SL_GNSS_CALIBRATION_STATE") int sl_fusion_get_geo_pose(SL_GeoPose pose, @Cast("bool") boolean radian);
 
     /**
      * \brief Convert latitude / longitude into position in sl::Fusion coordinate system.
      * @param in: the current GeoPose
      * @param out [out]: the current Pose
      * @param radian [in] : true if the geopose is set in radian.
-     * @return POSITIONAL_TRACKING_STATE is the current state of the tracking process
+     * @return GNSS_CALIBRATION_STATE is the current state of the tracking process
      */
-    public static native @Cast("SL_POSITIONAL_TRACKING_STATE") int sl_fusion_geo_to_camera(SL_LatLng in, SL_PoseData out, @Cast("bool") boolean radian);
+    public static native @Cast("SL_GNSS_CALIBRATION_STATE") int sl_fusion_geo_to_camera(SL_LatLng in, SL_PoseData out, @Cast("bool") boolean radian);
 
     /**
      * \brief returns the current GeoPose
      * @param pose [out]: the current GeoPose
      * @param radian [in] : true if the geopose is set in radian.
-     * @return POSITIONAL_TRACKING_STATE is the current state of the tracking process
+     * @return GNSS_CALIBRATION_STATE is the current state of the tracking process
      */
-    public static native @Cast("SL_POSITIONAL_TRACKING_STATE") int sl_fusion_camera_to_geo(SL_PoseData in, SL_GeoPose out, @Cast("bool") boolean radian);
+    public static native @Cast("SL_GNSS_CALIBRATION_STATE") int sl_fusion_camera_to_geo(SL_PoseData in, SL_GeoPose out, @Cast("bool") boolean radian);
+
+    /**
+     * \brief returns the current timestamp
+     * @return the current timestamp in nanoseconds.
+     */
+    public static native @Cast("unsigned long long") long sl_fusion_get_current_timestamp();
+
+    /**
+     * \brief Get the current calibration uncertainty defined during calibration process
+     *
+     * @param yaw_std [out] yaw uncertainty
+     * @param x_std [out] position uncertainty
+     * @return sl_GNSS_CALIBRATION_STATE representing current initialisation status
+     */
+    public static native @Cast("SL_GNSS_CALIBRATION_STATE") int sl_fusion_get_current_gnss_calibration_std(FloatPointer yaw_std, SL_Vector3 position_std);
+    public static native @Cast("SL_GNSS_CALIBRATION_STATE") int sl_fusion_get_current_gnss_calibration_std(FloatBuffer yaw_std, SL_Vector3 position_std);
+    public static native @Cast("SL_GNSS_CALIBRATION_STATE") int sl_fusion_get_current_gnss_calibration_std(float[] yaw_std, SL_Vector3 position_std);
+
+    /**
+     * \brief Get the calibration found between VIO and GNSS
+     * @return sl::Transform transform containing calibration found between VIO and GNSS
+     */
+    public static native void sl_fusion_get_geo_tracking_calibration(SL_Vector3 translation, SL_Quaternion rotation);
 
 	/**
 	\brief Close Multi Camera instance.

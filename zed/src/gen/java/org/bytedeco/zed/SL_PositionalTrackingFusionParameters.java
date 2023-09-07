@@ -10,7 +10,7 @@ import static org.bytedeco.zed.global.zed.*;
 
 
 /**
- * 
+ * \brief Holds the options used for initializing the positional tracking fusion module.
  *
  */
 @Properties(inherit = org.bytedeco.zed.presets.zed.class)
@@ -32,18 +32,14 @@ public class SL_PositionalTrackingFusionParameters extends Pointer {
     }
 
 	/**
-	 * \brief Is the gnss fusion is enabled
+	 * \brief This attribute is responsible for enabling or not GNSS positional tracking fusion.
 	 *
+	 * Default: false
 	 */
 	public native @Cast("bool") boolean enable_GNSS_fusion(); public native SL_PositionalTrackingFusionParameters enable_GNSS_fusion(boolean setter);
 	/**
-	 * \brief Distance necessary for initializing the transformation between cameras coordinate system and  GNSS coordinate system (north aligned)
-	 *
+	 * \brief Control the VIO / GNSS calibration process.
+	 * 
 	 */
-	public native float gnss_initialisation_distance(); public native SL_PositionalTrackingFusionParameters gnss_initialisation_distance(float setter);
-	/**
-	 * \brief Value used by Fusion for ignoring high covariance input GNSS data
-	 *
-	 */
-	public native float gnss_ignore_threshold(); public native SL_PositionalTrackingFusionParameters gnss_ignore_threshold(float setter);
+	public native @ByRef SL_GNSSCalibrationParameters gnss_calibration_parameters(); public native SL_PositionalTrackingFusionParameters gnss_calibration_parameters(SL_GNSSCalibrationParameters setter);
 }

@@ -9,6 +9,9 @@ import org.bytedeco.javacpp.annotation.*;
 import static org.bytedeco.zed.global.zed.*;
 
 
+/**
+\brief Holds the metrics of the fusion process.
+ */
 @Properties(inherit = org.bytedeco.zed.presets.zed.class)
 public class SL_FusionMetrics extends Pointer {
     static { Loader.load(); }
@@ -27,13 +30,22 @@ public class SL_FusionMetrics extends Pointer {
         return new SL_FusionMetrics((Pointer)this).offsetAddress(i);
     }
 
-
-	// mean number of camera that provides data during the past second
+	/**
+	 * \brief Mean number of camera that provides data during the past second.
+	 * 
+	 */
 	public native float mean_camera_fused(); public native SL_FusionMetrics mean_camera_fused(float setter);
 
-	// mean number of camera that provides data during the past second
+	/**
+	 * \brief Standard deviation of the data timestamp fused, the lower the better.
+	 * 
+	 */
 	public native float mean_stdev_between_camera(); public native SL_FusionMetrics mean_stdev_between_camera(float setter);
 
+	/**
+	 * \brief Sender metrics.
+	 * 
+	 */
 	public native @ByRef SL_CameraMetrics camera_individual_stats(int i); public native SL_FusionMetrics camera_individual_stats(int i, SL_CameraMetrics setter);
 	@MemberGetter public native SL_CameraMetrics camera_individual_stats();
 }

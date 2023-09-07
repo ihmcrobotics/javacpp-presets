@@ -9,6 +9,10 @@ import org.bytedeco.javacpp.annotation.*;
 import static org.bytedeco.zed.global.zed.*;
 
 
+/**
+ * \brief Represents a world position in ECEF format.
+ *
+ */
 @Properties(inherit = org.bytedeco.zed.presets.zed.class)
 public class SL_ECEF extends Pointer {
     static { Loader.load(); }
@@ -27,7 +31,19 @@ public class SL_ECEF extends Pointer {
         return new SL_ECEF((Pointer)this).offsetAddress(i);
     }
 
+	/**
+	 * \brief x coordinate of SL_ECEF.
+	 *
+	 */
 	public native double x(); public native SL_ECEF x(double setter);
+	/**
+	 * \brief y coordinate of SL_ECEF.
+	 *
+	 */
 	public native double y(); public native SL_ECEF y(double setter);
+	/**
+	 * \brief z coordinate of SL_ECEF.
+	 *
+	 */
 	public native double z(); public native SL_ECEF z(double setter);
 }

@@ -194,6 +194,7 @@ public class SL_InitParameters extends Pointer {
 	 The default behavior is synchronous, like previous ZED SDK versions
 	 */
 	public native @Cast("bool") boolean async_grab_camera_recovery(); public native SL_InitParameters async_grab_camera_recovery(boolean setter);
+
 	/**
 	 Define a computation upper limit to the grab frequency.
 	 This can be useful to get a known constant fixed rate or limit the computation load while keeping a short exposure time by setting a high camera capture framerate.
@@ -203,5 +204,4 @@ public class SL_InitParameters extends Pointer {
 	 default is 0.
 	 */
 	public native float grab_compute_capping_fps(); public native SL_InitParameters grab_compute_capping_fps(float setter);
-
 }

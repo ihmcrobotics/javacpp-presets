@@ -9,6 +9,9 @@ import org.bytedeco.javacpp.annotation.*;
 import static org.bytedeco.zed.global.zed.*;
 
 
+/**
+\brief Used to identify a specific camera in the Fusion API
+ */
 @Properties(inherit = org.bytedeco.zed.presets.zed.class)
 public class SL_CameraIdentifier extends Pointer {
     static { Loader.load(); }

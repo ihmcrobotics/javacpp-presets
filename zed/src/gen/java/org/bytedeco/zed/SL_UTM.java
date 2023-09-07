@@ -8,6 +8,11 @@ import org.bytedeco.javacpp.annotation.*;
 
 import static org.bytedeco.zed.global.zed.*;
 
+
+/**
+ * \brief Represents a world position in UTM format.
+ *
+ */
 @Properties(inherit = org.bytedeco.zed.presets.zed.class)
 public class SL_UTM extends Pointer {
     static { Loader.load(); }
@@ -26,9 +31,25 @@ public class SL_UTM extends Pointer {
         return new SL_UTM((Pointer)this).offsetAddress(i);
     }
 
+	/**
+	 * \brief Northing coordinate.
+	 *
+	 */
 	public native double northing(); public native SL_UTM northing(double setter);
+	/**
+	 * \brief Easting coordinate.
+	 *
+	 */
 	public native double easting(); public native SL_UTM easting(double setter);
+	/**
+	 * \brief Gamma coordinate.
+	 *
+	 */
 	public native double gamma(); public native SL_UTM gamma(double setter);
+	/**
+	 * \brief UTMZone of the coordinate.
+	 *
+	 */
 	public native @Cast("char") byte UTMZone(int i); public native SL_UTM UTMZone(int i, byte setter);
 	@MemberGetter public native @Cast("char*") BytePointer UTMZone();
 }

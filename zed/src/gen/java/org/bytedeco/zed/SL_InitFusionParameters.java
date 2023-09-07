@@ -10,6 +10,9 @@ import static org.bytedeco.zed.global.zed.*;
 
 
 
+/**
+\brief Holds the options used to initialize the \ref Fusion object.
+ */
 @Properties(inherit = org.bytedeco.zed.presets.zed.class)
 public class SL_InitFusionParameters extends Pointer {
     static { Loader.load(); }
@@ -29,31 +32,37 @@ public class SL_InitFusionParameters extends Pointer {
     }
 
 	/**
-	This parameter allows you to select the unit to be used for all metric values of the SDK. (depth, point cloud, tracking, mesh, and others).
-	\n default : \ref UNIT "UNIT::MILLIMETER"
+	 * \brief This parameter allows you to select the unit to be used for all metric values of the SDK (depth, point cloud, tracking, mesh, and others).
+	 *
+	 *  Default : \ref SL_UNIT "SL_UNIT_MILLIMETER"
 	 */
 	public native @Cast("SL_UNIT") int coordinate_units(); public native SL_InitFusionParameters coordinate_units(int setter);
 
 	/**
-	Positional tracking, point clouds and many other features require a given \ref COORDINATE_SYSTEM to be used as reference.
-	This parameter allows you to select the \ref COORDINATE_SYSTEM used by the \ref Camera to return its measures.
-	\n This defines the order and the direction of the axis of the coordinate system.
-	\n default : \ref COORDINATE_SYSTEM "COORDINATE_SYSTEM::IMAGE"
+	 * \brief Positional tracking, point clouds and many other features require a given \ref SL_COORDINATE_SYSTEM to be used as reference.
+	 * This parameter allows you to select the \ref COORDINATE_SYSTEM used by the \ref SL_Camera to return its measures.
+	 * 
+	 * This defines the order and the direction of the axis of the coordinate system.
+	 * \n Default : \ref SL_COORDINATE_SYSTEM "SL_COORDINATE_SYSTEM_IMAGE"
 	 */
 	public native @Cast("SL_COORDINATE_SYSTEM") int coordinate_system(); public native SL_InitFusionParameters coordinate_system(int setter);
 
 	/**
-	 * \brief it allows users to extract some stats of the Fusion API like drop frame of each camera, latency, etc
+	 * \brief It allows users to extract some stats of the Fusion API like drop frame of each camera, latency, etc...
 	 *
 	 */
 	public native @Cast("bool") boolean output_performance_metrics(); public native SL_InitFusionParameters output_performance_metrics(boolean setter);
 
+	/**
+	 * \brief Enable the verbosity mode of the SDK.
+	 * 
+	*/
 	public native @Cast("bool") boolean verbose(); public native SL_InitFusionParameters verbose(boolean setter);
 
 	/**
 	 * \brief If specified change the number of period necessary for a source to go in timeout without data. For example, if you set this to 5
 	 * then, if any source do not receive data during 5 period, these sources will go to timeout and will be ignored.
-	 *
+	 * 
 	 */
 	public native @Cast("unsigned int") int timeout_period_number(); public native SL_InitFusionParameters timeout_period_number(int setter);
 }
