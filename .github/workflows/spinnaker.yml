@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: ihmcrobotics/javacpp-presets/.github/actions/deploy-windows@spinnaker-upgrade
   redeploy:
-    needs: [linux-x86_64, windows-x86, windows-x86_64]
+    needs: [linux-arm64, linux-x86_64, windows-x86, windows-x86_64]
     runs-on: ubuntu-20.04
     steps:
       - uses: ihmcrobotics/javacpp-presets/.github/actions/redeploy@spinnaker-upgrade
