@@ -170,20 +170,20 @@ runs:
 
         if "%CI_DEPLOY_PLATFORM%"=="windows-x86" if "%CI_DEPLOY_MODULE%"=="spinnaker" (
           echo Installing Spinnaker x86
-          python -m gdown.cli https://drive.google.com/uc?id=17GagcVjj2Gv6WswJR86_DKw9jLEfHHdo
-          python -m gdown.cli https://drive.google.com/uc?id=1i93o2rFPtRKrCGBH2bUL5FQZchrDzrDe
+          python -m gdown.cli https://drive.google.com/uc?id=1aPDomXsro4CmkvY-NV_GwkFb_fHkCfkO
+          python -m gdown.cli https://drive.google.com/uc?id=1rG40RVJ8WN9sECSO8e3t9gin6YjEiPxV
           rem We can get these msi files by starting the installation from the exe file
-          cmd.exe /c "msiexec /quiet /i Spinnaker-3.0.0.118_Binaries_v140_x86.msi ADDLOCAL=ALL"
-          cmd.exe /c "msiexec /quiet /i Spinnaker-3.0.0.118_SourceCode_v140_x86.msi ADDLOCAL=ALL"
+          cmd.exe /c "msiexec /quiet /i Spinnaker-3.1.0.79_Binaries_v140_x86.msi ADDLOCAL=ALL"
+          cmd.exe /c "msiexec /quiet /i Spinnaker-3.1.0.79_SourceCode_v140_x86.msi ADDLOCAL=ALL"
         )
 
         if "%CI_DEPLOY_PLATFORM%"=="windows-x86_64" if "%CI_DEPLOY_MODULE%"=="spinnaker" (
           echo Installing Spinnaker x64
-          python -m gdown.cli https://drive.google.com/uc?id=12AkFMckbDqxFudYGWwaSLT7omOTtuRJt
-          python -m gdown.cli https://drive.google.com/uc?id=1_SUnBQnv4czISJWVFnbxxWRZM6d2yzZK
+          python -m gdown.cli https://drive.google.com/uc?id=1jpX6bHXM6ivBOtTtlXFqQp0Hvi5x4NLc
+          python -m gdown.cli https://drive.google.com/uc?id=1ishxJ4mmZiDO4NqnAGluBp24dvuzEf-z
           rem We can get these msi files by starting the installation from the exe file
-          cmd.exe /c "msiexec /quiet /i Spinnaker-3.0.0.118_Binaries_v140_x64.msi ADDLOCAL=ALL"
-          cmd.exe /c "msiexec /quiet /i Spinnaker-3.0.0.118_SourceCode_v140_x64.msi ADDLOCAL=ALL"
+          cmd.exe /c "msiexec /quiet /i Spinnaker-3.1.0.79_Binaries_v140_x64.msi ADDLOCAL=ALL"
+          cmd.exe /c "msiexec /quiet /i Spinnaker-3.1.0.79_SourceCode_v140_x64.msi ADDLOCAL=ALL"
         )
 
         set GRADLE_TASK=publishToMavenLocal

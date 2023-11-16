@@ -253,10 +253,17 @@ runs:
           find -name *.deb | while read f; do ar -xv $f; $SUDO tar --totals -xf data.tar.xz -C /; done;
         fi
 
+        if [[ "$CI_DEPLOY_PLATFORM" == "linux-arm64" ]] && [[ "$CI_DEPLOY_MODULE" == "spinnaker" ]]; then
+          echo Installing Spinnaker arm64
+          python3 -m gdown.cli https://drive.google.com/uc?id=1vY1NWNl0NNdeety6hzgos9FZtjqshPx7
+          tar -xzvf spinnaker-3.1.0.79-arm64-pkg.tar.gz
+          find -name *.deb | while read f; do ar -xv $f; $SUDO tar --totals -xvf data.tar.xz -C /; done;
+        fi
+
         if [[ "$CI_DEPLOY_PLATFORM" == "linux-x86_64" ]] && [[ "$CI_DEPLOY_MODULE" == "spinnaker" ]]; then
           echo Installing Spinnaker amd64
-          python3 -m gdown.cli https://drive.google.com/uc?id=1B91OxuFgT-T29fNlBc2gsgr-K2l2LNtw
-          tar -xzvf spinnaker-3.0.0.118-amd64-pkg.tar.gz
+          python3 -m gdown.cli https://drive.google.com/uc?id=1GikprQCTtJaq0q5I4UpWz0l1frp2AKOX
+          tar -xzvf spinnaker-3.1.0.79-amd64-pkg.tar.gz
           find -name *.deb | while read f; do ar -xv $f; $SUDO tar --totals -xvf data.tar.xz -C /; done;
         fi
 

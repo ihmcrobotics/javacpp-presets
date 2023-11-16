@@ -32,9 +32,9 @@ import org.bytedeco.javacpp.tools.InfoMap;
 import org.bytedeco.javacpp.tools.InfoMapper;
 
 /**
- * Wrapper for Point Grey Spinnaker_C library (the C API v.3).
+ * Wrapper for FLIR Spinnaker_C library (the C API v.3).
  *
- * @author Jarek Sacha
+ * @author Jarek Sacha, Institute for Human and Machine Cognition
  */
 @Properties(inherit = javacpp.class,
             target = "org.bytedeco.spinnaker.Spinnaker_C",
