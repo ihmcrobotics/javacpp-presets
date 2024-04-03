@@ -25,17 +25,19 @@ package org.bytedeco.zed.presets;
 import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacpp.annotation.Platform;
 import org.bytedeco.javacpp.annotation.Properties;
+import org.bytedeco.javacpp.presets.javacpp;
 import org.bytedeco.javacpp.tools.Info;
 import org.bytedeco.javacpp.tools.InfoMap;
 import org.bytedeco.javacpp.tools.InfoMapper;
 
-@Properties(
+@Properties(inherit = javacpp.class,
     value = {
-        @Platform(value = "linux",
-                include = {"<sl/c_api/types_c.h>", "<sl/c_api/zed_interface.h>"},
-                includepath = {"/usr/local/zed/include", "/usr/local/cuda/include"},
-                linkpath = "/usr/local/zed/lib",
-                link = {"sl_zed", "sl_zed_c", "sl_ai"})
+        @Platform(value = "windows-x86_64",
+              include = {"<sl/c_api/types_c.h>", "<sl/c_api/zed_interface.h>"},
+              includepath = {"C:\\Program Files (x86)\\ZED SDK\\include", "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\include"},
+              preloadpath = {"C:\\Program Files (x86)\\ZED SDK\\bin"},
+              linkpath = {"C:\\Program Files (x86)\\ZED SDK\\lib"},
+              link = {"sl_zed64", "sl_zed_c"})
     },
     target = "org.bytedeco.zed",
     global = "org.bytedeco.zed.global.zed"

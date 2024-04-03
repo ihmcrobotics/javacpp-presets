@@ -6,13 +6,13 @@
   <parent>
     <groupId>org.bytedeco</groupId>
     <artifactId>javacpp-presets</artifactId>
-    <version>1.5.10-SNAPSHOT</version>
+    <version>1.5.9</version>
     <relativePath>../../</relativePath>
   </parent>
 
   <groupId>org.bytedeco</groupId>
   <artifactId>zed-platform</artifactId>
-  <version>4.0.7-${project.parent.version}</version>
+  <version>4.0.7_1-${project.parent.version}</version>
   <name>JavaCPP Presets Platform for zed</name>
 
   <properties>
@@ -29,13 +29,7 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>${javacpp.moduleId}</artifactId>
       <version>${project.version}</version>
-      <classifier>${javacpp.platform.linux-x86_64}</classifier>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>${javacpp.moduleId}</artifactId>
-      <version>${project.version}</version>
-      <classifier>${javacpp.platform.linux-arm64}</classifier>
+      <classifier>${javacpp.platform.windows-x86_64}</classifier>
     </dependency>
   </dependencies>
 
