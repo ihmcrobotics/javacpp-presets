@@ -52,7 +52,7 @@ jobs:
       matrix:
         ext: ["", -gpu]
     steps:
-      - uses: bytedeco/javacpp-presets/.github/actions/deploy-ubuntu@actions
+      - uses: ihmcrobotics/javacpp-presets/.github/actions/deploy-ubuntu@actions
 #  linux-ppc64le:
 #    runs-on: ubuntu-20.04
 #    steps:
@@ -67,7 +67,7 @@ jobs:
       matrix:
         ext: ["", -gpu]
     steps:
-      - uses: bytedeco/javacpp-presets/.github/actions/deploy-ubuntu@actions
+      - uses: ihmcrobotics/javacpp-presets/.github/actions/deploy-ubuntu@actions
   # macosx-arm64:
   #   runs-on: macos-14
   #   steps:
@@ -92,4 +92,4 @@ jobs:
     needs: [linux-arm64, linux-x86_64]
     runs-on: ubuntu-20.04
     steps:
-      - uses: bytedeco/javacpp-presets/.github/actions/redeploy@actions
+      - uses: ihmcrobotics/javacpp-presets/.github/actions/redeploy@actions
