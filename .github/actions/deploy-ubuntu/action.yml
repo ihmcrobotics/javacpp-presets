@@ -188,6 +188,7 @@ runs:
 
           # Install cross-compiled arm64-sbsa CUDA
           if [[ "$CI_DEPLOY_PLATFORM" == "linux-arm64" ]]; then
+            $SUDO apt-get -y install g++-10-aarch64-linux-gnu
             curl -LO https://developer.download.nvidia.com/compute/cuda/12.6.0/local_installers/cuda-repo-cross-sbsa-rhel8-12-6-local-12.6.0-1.noarch.rpm
             $SUDO rpm -i --force --ignorearch --nodeps cuda-repo-cross-sbsa-rhel8-12-6-local-12.6.0-1.noarch.rpm
             pushd /var/cuda-repo-cross-sbsa-rhel8-12-6-local/; $SUDO rpm -i --force --ignorearch --nodeps cuda*.rpm libc*.rpm libn*.rpm; $SUDO rm *.rpm; popd
