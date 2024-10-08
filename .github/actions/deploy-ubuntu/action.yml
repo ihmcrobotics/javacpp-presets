@@ -40,7 +40,6 @@ runs:
         elif [[ "$CI_DEPLOY_PLATFORM" == "linux-arm64" ]]; then
           export ARCH=arm64
           export ARCH_CUDA=sbsa
-          export CUDA_TARGET=sbsa-linux
           export PREFIX=aarch64-linux-gnu
           # If cross compiling
           if [[ "$( uname -m )" == "x86_64" ]]; then
