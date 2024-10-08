@@ -222,6 +222,12 @@ runs:
           # $SUDO sed -i /device_segmented_sort.cuh/d /usr/local/cuda/include/cub/cub.cuh
           # $SUDO sed -i /warp_merge_sort.cuh/d /usr/local/cuda/include/cub/cub.cuh
 
+          echo CUDADEBUG
+          ls -al /usr/local/cuda
+          ls -al /usr/local/cuda/include
+          ls -al /usr/local/cuda/lib
+          ls -al /usr/local/cuda/lib64
+
           # Remove downloaded archives and unused libraries to avoid running out of disk space
           $SUDO rm -f $(find /usr/local/cuda/ -name '*.a' -and -not -name libcudart_static.a -and -not -name libcudadevrt.a -and -not -name libnvcomp_device.a)
         fi
