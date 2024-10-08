@@ -207,11 +207,11 @@ runs:
             rm -f $NVCOMP.tar.gz
           fi
 
-          # TODO:
           $SUDO cp $($SUDO find /usr/local -name "libcuda.so" | head -n 1 2>/dev/null) /usr/lib64/libcuda.so
           $SUDO cp $($SUDO find /usr/local -name "libcuda.so" | head -n 1 2>/dev/null) /usr/lib64/libcuda.so.1
           $SUDO cp $($SUDO find /usr/local -name "libnvidia-ml.so" | head -n 1 2>/dev/null) /usr/lib64/libnvidia-ml.so
           $SUDO cp $($SUDO find /usr/local -name "libnvidia-ml.so" | head -n 1 2>/dev/null) /usr/lib64/libnvidia-ml.so.1
+          # TODO:
           $SUDO sed -i s/cublas_v2.h/cublas_api.h/g /usr/local/cuda/include/cublasXt.h /usr/local/cuda/include/cusolverDn.h /usr/local/cuda/include/cusolverSp.h
           $SUDO sed -i /block_merge_sort.cuh/d /usr/local/cuda/include/cub/cub.cuh
           $SUDO sed -i /device_merge_sort.cuh/d /usr/local/cuda/include/cub/cub.cuh
