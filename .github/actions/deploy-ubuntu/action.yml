@@ -42,7 +42,7 @@ runs:
           export ARCH_CUDA=sbsa
           export PREFIX=aarch64-linux-gnu
           # If cross compiling
-          if [[ "$ARCH" == "amd64" ]]; then
+          if [[ "$( uname -m )" == "x86_64" ]]; then
             export CUDA=cuda-repo-cross-sbsa-rhel8-12-6-local-12.6.0-1.noarch.rpm
             export CUDNN=cuda-12-9.3.0.75-1.aarch64 # TODO remove
             export NCCL=2.22.3-1+cuda12.5.aarch64 # TODO remove
