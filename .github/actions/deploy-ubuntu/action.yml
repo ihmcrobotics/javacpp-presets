@@ -41,9 +41,16 @@ runs:
           export ARCH=arm64
           export ARCH_CUDA=sbsa
           export PREFIX=aarch64-linux-gnu
-          export CUDA=cuda-repo-rhel8-12-6-local-12.6.0_560.28.03-1.aarch64.rpm
-          export CUDNN=cuda-12-9.3.0.75-1.aarch64
-          export NCCL=2.22.3-1+cuda12.5.aarch64
+          # If cross compiling
+          if [[ "$ARCH" == "amd64" ]]; then
+            export CUDA=cuda-repo-cross-sbsa-rhel8-12-6-local-12.6.0-1.noarch.rpm
+            export CUDNN=cuda-12-9.3.0.75-1.aarch64 # TODO remove
+            export NCCL=2.22.3-1+cuda12.5.aarch64 # TODO remove
+          else
+            export CUDA=cuda-repo-rhel8-12-6-local-12.6.0_560.28.03-1.aarch64.rpm
+            export CUDNN=cuda-12-9.3.0.75-1.aarch64
+            export NCCL=2.22.3-1+cuda12.5.aarch64
+          fi
           export NVCOMP=nvcomp-linux-sbsa-4.0.0-cuda12.5
           export USERLAND_BUILDME="buildme --aarch64"
         elif [[ "$CI_DEPLOY_PLATFORM" == "linux-ppc64le" ]]; then
@@ -107,7 +114,7 @@ runs:
         # $SUDO apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EB9B1D8886F44E2A
         # $SUDO apt-key adv --keyserver keyserver.ubuntu.com --recv-keys BA6932366A755776
         $SUDO apt-get update
-        $SUDO apt-get -y install gcc-multilib g++-multilib gfortran-multilib python3 python2.7 python3-minimal python2.7-minimal rpm libasound2-dev:$ARCH freeglut3-dev:$ARCH libfontconfig-dev:$ARCH libgtk2.0-dev:$ARCH libusb-dev:$ARCH libusb-1.0-0-dev:$ARCH libffi-dev:$ARCH libbz2-dev:$ARCH zlib1g-dev:$ARCH libxcb1-dev:$ARCH libpulse-dev:$ARCH
+        $SUDO apt-get -y install g++-10-aarch64-linux-gnu gcc-multilib g++-multilib gfortran-multilib python3 python2.7 python3-minimal python2.7-minimal rpm libasound2-dev:$ARCH freeglut3-dev:$ARCH libfontconfig-dev:$ARCH libgtk2.0-dev:$ARCH libusb-dev:$ARCH libusb-1.0-0-dev:$ARCH libffi-dev:$ARCH libbz2-dev:$ARCH zlib1g-dev:$ARCH libxcb1-dev:$ARCH libpulse-dev:$ARCH
         $SUDO apt-get -y install pkg-config ccache clang $TOOLCHAIN openjdk-8-jdk ant python2 python3-pip swig git file wget zstd unzip tar bzip2 gzip patch autoconf-archive autogen automake cmake make libtool bison flex perl nasm ragel curl libcurl4-openssl-dev libssl-dev libffi-dev libbz2-dev zlib1g-dev rapidjson-dev libdrm-dev
 
         export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
@@ -170,7 +177,9 @@ runs:
 
           $SUDO rpm -i --force --ignorearch --nodeps $CUDA libcudnn*.rpm libnccl*.rpm
           rm -f *.rpm *.tgz *.txz *.tar.*
-          pushd /var/cuda-repo-rhel8-12-6-local/; $SUDO rpm -i --force --ignorearch --nodeps cuda*.rpm libc*.rpm libn*.rpm; $SUDO rm *.rpm; popd
+          # Find first repo in /var that starts with "cuda-repo"; e.g. /var/cuda-repo-cross-sbsa-rhel8-12-6-local/
+          pushd "$(find /var -type d -name "cuda-repo*" 2>/dev/null | head -n 1)"; $SUDO rpm -i --force --ignorearch --nodeps cuda*.rpm libc*.rpm libn*.rpm; $SUDO rm *.rpm; popd
+          $SUDO ln -sf /usr/local/cuda-12.6 /usr/local/cuda
           $SUDO ln -sf /usr/local/cuda/lib64/ /usr/local/cuda/lib
           $SUDO ln -sf /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/libcuda.so
           $SUDO ln -sf /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/libnvidia-ml.so
@@ -184,15 +193,6 @@ runs:
             $SUDO tar -xvf $NVCOMP.tar.gz -C /usr/local/cuda/lib64/ --strip-components=1 lib/ || $SUDO tar -xvf $NVCOMP.tar.gz -C /usr/local/cuda/lib64/ --strip-components=2 nvcomp/lib/
             $SUDO tar -xvf $NVCOMP.tar.gz -C /usr/local/cuda/include/ --strip-components=1 include/ || $SUDO tar -xvf $NVCOMP.tar.gz -C /usr/local/cuda/include/ --strip-components=2 nvcomp/include/
             rm -f $NVCOMP.tar.gz
-          fi
-
-          # Install cross-compiled arm64-sbsa CUDA
-          if [[ "$CI_DEPLOY_PLATFORM" == "linux-arm64" ]]; then
-            $SUDO apt-get update && $SUDO apt-get -y install g++-10-aarch64-linux-gnu
-            $SUDO apt-get clean
-            curl -LO https://developer.download.nvidia.com/compute/cuda/12.6.0/local_installers/cuda-repo-cross-sbsa-rhel8-12-6-local-12.6.0-1.noarch.rpm
-            $SUDO rpm -i --force --ignorearch --nodeps cuda-repo-cross-sbsa-rhel8-12-6-local-12.6.0-1.noarch.rpm
-            pushd /var/cuda-repo-cross-sbsa-rhel8-12-6-local/; $SUDO rpm -i --force --ignorearch --nodeps cuda*.rpm libc*.rpm libn*.rpm; $SUDO rm *.rpm; popd
           fi
 
           $SUDO cp /usr/local/cuda/lib64/stubs/libcuda.so /usr/lib64/libcuda.so
