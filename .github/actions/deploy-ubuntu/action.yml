@@ -186,16 +186,19 @@ runs:
           # Find first directory in /var that starts with "cuda-repo"; e.g. /var/cuda-repo-cross-sbsa-rhel8-12-6-local
           pushd "$(find /var -type d -name "cuda-repo*" 2>/dev/null | head -n 1)"; $SUDO rpm -i --force --ignorearch --nodeps cuda*.rpm libc*.rpm libn*.rpm; $SUDO rm *.rpm; popd
 
+          # TODO: Make not CUDA version specific
           $SUDO ln -sf /usr/local/cuda-12.6 /usr/local/cuda
 
-          $SUDO mkdir -p  /usr/local/cuda/lib64/
-          $SUDO ln -sf /usr/local/cuda/lib64/ /usr/local/cuda/lib
-          $SUDO ln -s $($SUDO find /usr/local -name "libcuda.so" | head -n 1 2>/dev/null) /usr/local/cuda/lib64/libcuda.so
-          $SUDO ln -s $($SUDO find /usr/local -name "libnvidia-ml.so" | head -n 1 2>/dev/null) /usr/local/cuda/lib64/libnvidia-ml.so
+          CUDA_TARGET=$(ls -d /usr/local/cuda/targets/*/ 2>/dev/null | head -n 1 | xargs basename)
+          CUDA_TARGET_DIR=/usr/local/cuda/targets/$CUDA_TARGET
 
-          $SUDO mkdir -p /usr/local/cuda/include/
+          $SUDO ln -sf $CUDA_TARGET_DIR/include /usr/local/cuda/include
+          $SUDO ln -sf $CUDA_TARGET_DIR/lib /usr/local/cuda/lib
+          $SUDO ln -sf $CUDA_TARGET_DIR/lib /usr/local/cuda/lib64
+
           $SUDO mv /usr/include/cudnn* /usr/include/nccl* /usr/local/cuda/include/
           $SUDO mv /usr/lib64/libcudnn* /usr/lib64/libnccl* /usr/local/cuda/lib64/
+
           for f in /usr/local/cuda/include/*_v9.h; do $SUDO ln -sf $f ${f:0:${#f}-5}.h; done
           for f in /usr/local/cuda/lib64/libcudnn*so.9.*; do $SUDO ln -sf $f ${f:0:${#f}-4}; $SUDO ln -sf $f ${f:0:${#f}-6}; done
 
@@ -206,11 +209,13 @@ runs:
             rm -f $NVCOMP.tar.gz
           fi
 
+          # TODO: are these needed?
           $SUDO cp $($SUDO find /usr/local -name "libcuda.so" | head -n 1 2>/dev/null) /usr/lib64/libcuda.so
           $SUDO cp $($SUDO find /usr/local -name "libcuda.so" | head -n 1 2>/dev/null) /usr/lib64/libcuda.so.1
           $SUDO cp $($SUDO find /usr/local -name "libnvidia-ml.so" | head -n 1 2>/dev/null) /usr/lib64/libnvidia-ml.so
           $SUDO cp $($SUDO find /usr/local -name "libnvidia-ml.so" | head -n 1 2>/dev/null) /usr/lib64/libnvidia-ml.so.1
-          # TODO:
+
+          # TODO: what do these do?
           # $SUDO sed -i s/cublas_v2.h/cublas_api.h/g /usr/local/cuda/include/cublasXt.h /usr/local/cuda/include/cusolverDn.h /usr/local/cuda/include/cusolverSp.h
           # $SUDO sed -i /block_merge_sort.cuh/d /usr/local/cuda/include/cub/cub.cuh
           # $SUDO sed -i /device_merge_sort.cuh/d /usr/local/cuda/include/cub/cub.cuh
